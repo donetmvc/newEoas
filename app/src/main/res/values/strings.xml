@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">移动OA</string>
+
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+
+    <string name="update">更&#032;&#032;&#032;&#032;&#032;&#032;&#032;新</string>
+    <string name="refuse">残忍拒绝</string>
+    <string name="hasupdate">有更新啦</string>
+
+    <integer-array name="material_colors">
+        <item>@color/material_red</item>
+        <item>@color/material_green</item>
+        <item>@color/material_blue</item>
+        <item>@color/material_yellow</item>
+    </integer-array>
+
+    <integer-array name="material_colors_blue">
+        <item>@color/seg_text_unselected_blue</item>
+        <item>@color/seg_text_unselected_blue</item>
+        <item>@color/seg_text_unselected_blue</item>
+        <item>@color/seg_text_unselected_blue</item>
+    </integer-array>
+
+</resources>
