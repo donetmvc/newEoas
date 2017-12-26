@@ -43,20 +43,21 @@ import butterknife.ButterKnife
 class SearchActivity : AppCompatActivity(), ContactService.IOnSearchContactListener {
 
     @BindView(R.id.searchtoolbar)
-     var searchtoolbar: Toolbar? = null
-     var editText: EditText? = null
-
-    internal var mList: List<LoginInfo>? = null
+    lateinit var searchtoolbar: Toolbar
+    @BindView(R.id.edit_searchKey)
+    lateinit var editText: EditText
     @BindView(R.id.txt_tips)
-     var txtTips: TextView? = null
+    lateinit var txtTips: TextView
     @BindView(R.id.listView)
-     var listView: ListView? = null
+    lateinit var listView: ListView
     @BindView(R.id.refresh)
-     var refresh: MaterialRefreshLayout? = null
+    lateinit var refresh: MaterialRefreshLayout
+
     private var imageLoader: ImageLoader? = null
 
     internal var mAdapt: ContactAdapt? = null
     internal var contactService: ContactService? = null
+    internal var mList: List<LoginInfo>? = null
 
     private var searchKey: String? = null
     private var httpDialog: Dialog? = null

@@ -101,15 +101,15 @@ class ScheduleAdapt : BaseAdapter {
      */
     internal class ViewHolder(view: View) {
         @BindView(R.id.txt_date)
-        public var txtDate: TextView? = null
+        lateinit var txtDate: TextView
         @BindView(R.id.txt_work)
-        public var txtWork: TextView? = null
+        lateinit var txtWork: TextView
         @BindView(R.id.txt_offwork)
-        public var txtOffwork: TextView? = null
+        lateinit var txtOffwork: TextView
         @BindView(R.id.txt_workdes)
-        public var txtWorkdes: TextView? = null
+        lateinit var txtWorkdes: TextView
         @BindView(R.id.txt_offworkdes)
-        public var txtOffworkdes: TextView? = null
+        lateinit var txtOffworkdes: TextView
 
         init {
             ButterKnife.bind(this, view)

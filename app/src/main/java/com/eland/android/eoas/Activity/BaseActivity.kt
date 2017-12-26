@@ -4,41 +4,47 @@ import android.Manifest
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
-
-import com.zhy.m.permission.MPermissions
-import com.zhy.m.permission.PermissionDenied
-import com.zhy.m.permission.PermissionGrant
+import com.eland.android.eoas.R
+import permissions.dispatcher.*
 
 /**
  * Created by liuwenbin on 2017/2/8.
  */
-
-class BaseActivity : AppCompatActivity() {
+@RuntimePermissions
+open class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (!MPermissions.shouldShowRequestPermissionRationale(this@BaseActivity, Manifest.permission.READ_PHONE_STATE, REQUECT_CODE_SDCARD)) {
-            MPermissions.requestPermissions(this@BaseActivity, REQUECT_CODE_SDCARD, Manifest.permission.READ_PHONE_STATE)
-        }
+        checkAppPermission()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        MPermissions.onRequestPermissionsResult(this, requestCode, permissions, grantResults)
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    fun checkAppPermission() {
+        showPhoneStateWithPermissionCheck()
     }
 
 
-//    @PermissionGrant(REQUECT_CODE_SDCARD)
-    fun requestPhoneStateSuccess() {
-        Toast.makeText(this, "GRANT ACCESS SDCARD!", Toast.LENGTH_SHORT).show()
+    @NeedsPermission(READ_PHONE_STATE_PERMISSION)
+    fun showPhoneState() {
+
     }
 
-//    @PermissionDenied(REQUECT_CODE_SDCARD)
-    fun requestPhoneStateFailed() {
-        Toast.makeText(this, "DENY ACCESS SDCARD!", Toast.LENGTH_SHORT).show()
+    @OnShowRationale(READ_PHONE_STATE_PERMISSION)
+    fun showRationaleForPhoneState(request: PermissionRequest) {
+        //showRationaleDialog(R.string.permission_camera_rationale, request)
+    }
+
+    @OnPermissionDenied(READ_PHONE_STATE_PERMISSION)
+    fun onPhoneStateDenied() {
+        Toast.makeText(this, R.string.permission_camera_denied, Toast.LENGTH_SHORT).show()
+    }
+
+    @OnNeverAskAgain(READ_PHONE_STATE_PERMISSION)
+    fun onPhoneStateNeverAskAgain() {
+        Toast.makeText(this, R.string.permission_camera_never_askagain, Toast.LENGTH_SHORT).show()
     }
 
     companion object {
-        private val REQUECT_CODE_SDCARD = 2
+        const val READ_PHONE_STATE_PERMISSION: String = Manifest.permission.READ_PHONE_STATE
+        const val CAMERA_PERMISSION: String = Manifest.permission.CAMERA
     }
 }

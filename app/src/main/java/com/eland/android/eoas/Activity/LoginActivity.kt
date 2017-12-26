@@ -23,9 +23,6 @@ import com.pgyersdk.javabean.AppBean
 import com.pgyersdk.update.PgyUpdateManager
 import com.pgyersdk.update.UpdateManagerListener
 import com.rey.material.widget.Button
-import com.zhy.m.permission.MPermissions
-import com.zhy.m.permission.PermissionDenied
-import com.zhy.m.permission.PermissionGrant
 
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -39,11 +36,12 @@ import me.drakeet.materialdialog.MaterialDialog
 class LoginActivity : AppCompatActivity(), LoginService.ISignInListener, ProgressUtil.IOnDialogConfirmListener {
 
     @BindView(R.id.edit_username)
-     var editUsername: EditTextView? = null
+    lateinit var editUsername: EditTextView
     @BindView(R.id.edit_password)
-     var editPassword: EditTextView? = null
+    lateinit var editPassword: EditTextView
     @BindView(R.id.btn_login)
-    var btnLogin: Button? = null
+    lateinit var btnLogin: Button
+
     private val TAG = "EOAS"
     private var progressDialog: Dialog? = null
     private var context: Context? = null
@@ -60,12 +58,6 @@ class LoginActivity : AppCompatActivity(), LoginService.ISignInListener, Progres
     private var theme = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        //read phone state
-        if (!MPermissions.shouldShowRequestPermissionRationale(this@LoginActivity,
-                Manifest.permission.READ_PHONE_STATE, REQUECT_CODE_READPHONESTATE)) {
-            MPermissions.requestPermissions(this@LoginActivity, REQUECT_CODE_READPHONESTATE, Manifest.permission.READ_PHONE_STATE)
-        }
-
         theme = SharedReferenceHelper.getInstance(this).getValue(Constant.EOAS_THEME)
         if (!theme.isEmpty()) {
             if (theme == "RED") {
@@ -84,63 +76,6 @@ class LoginActivity : AppCompatActivity(), LoginService.ISignInListener, Progres
 
         initActivity()
         initUpdate()
-    }
-
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        MPermissions.onRequestPermissionsResult(this, requestCode, permissions, grantResults)
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
-
-    @PermissionGrant(REQUEST_CODE_WRITEEXTERNAL_STORAGE)
-    fun requestExternalSuccess() {
-        //access gps
-        if (!MPermissions.shouldShowRequestPermissionRationale(this@LoginActivity, Manifest.permission.ACCESS_FINE_LOCATION, REQEST_CODE_ACCESS_FINE_LOCATION)) {
-            MPermissions.requestPermissions(this@LoginActivity, REQEST_CODE_ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
-        }
-    }
-
-    @PermissionDenied(REQUEST_CODE_WRITEEXTERNAL_STORAGE)
-    fun requestExternalFailed() {
-        //Toast.makeText(this, "DENY ACCESS SDCARD!", Toast.LENGTH_SHORT).show();
-    }
-
-    @PermissionGrant(REQUECT_CODE_READPHONESTATE)
-    fun requestPhoneStateSuccess() {
-        //access EXTERNAL
-        if (!MPermissions.shouldShowRequestPermissionRationale(this@LoginActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_CODE_WRITEEXTERNAL_STORAGE)) {
-            MPermissions.requestPermissions(this@LoginActivity, REQUEST_CODE_WRITEEXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        }
-    }
-
-    @PermissionDenied(REQUECT_CODE_READPHONESTATE)
-    fun requestPhoneStateFailed() {
-        //Toast.makeText(this, "DENY ACCESS SDCARD!", Toast.LENGTH_SHORT).show();
-    }
-
-    @PermissionGrant(REQEST_CODE_ACCESS_FINE_LOCATION)
-    fun requestLocationSuccess() {
-        //Toast.makeText(this, "GRANT ACCESS SDCARD!", Toast.LENGTH_SHORT).show();
-        //access Mic
-        if (!MPermissions.shouldShowRequestPermissionRationale(this@LoginActivity, Manifest.permission.RECORD_AUDIO, REQEST_CODE_RECORD_AUDIO)) {
-            MPermissions.requestPermissions(this@LoginActivity, REQEST_CODE_RECORD_AUDIO, Manifest.permission.RECORD_AUDIO)
-        }
-    }
-
-    @PermissionDenied(REQUECT_CODE_READPHONESTATE)
-    fun requestMicFailed() {
-        //Toast.makeText(this, "DENY ACCESS SDCARD!", Toast.LENGTH_SHORT).show();
-    }
-
-    @PermissionGrant(REQEST_CODE_RECORD_AUDIO)
-    fun requestMicSuccess() {
-        //Toast.makeText(this, "GRANT ACCESS SDCARD!", Toast.LENGTH_SHORT).show();
-    }
-
-    @PermissionDenied(REQEST_CODE_RECORD_AUDIO)
-    fun requestLocationFailed() {
-        //Toast.makeText(this, "DENY ACCESS SDCARD!", Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.btn_login)
@@ -281,9 +216,5 @@ class LoginActivity : AppCompatActivity(), LoginService.ISignInListener, Progres
 
     companion object {
 
-        const val REQUEST_CODE_WRITEEXTERNAL_STORAGE = 1
-        const val REQUECT_CODE_READPHONESTATE = 2
-        const val REQEST_CODE_ACCESS_FINE_LOCATION = 3
-        const val REQEST_CODE_RECORD_AUDIO = 4
     }
 }

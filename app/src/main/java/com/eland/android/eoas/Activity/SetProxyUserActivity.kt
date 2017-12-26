@@ -41,11 +41,12 @@ import butterknife.ButterKnife
 class SetProxyUserActivity : AppCompatActivity(), ProxyService.IOnSearchProxyInfoListener {
 
     @BindView(R.id.setProxytoolbar)
-     var setProxytoolbar: Toolbar? = null
+    lateinit var setProxytoolbar: Toolbar
     @BindView(R.id.listView)
-     var listView: ListView? = null
+    lateinit var listView: ListView
     @BindView(R.id.refresh)
-     var refresh: MaterialRefreshLayout? = null
+    lateinit var refresh: MaterialRefreshLayout
+
     private var startDate: String? = null
     private var endDate: String? = null
     private var mUserId: String? = null

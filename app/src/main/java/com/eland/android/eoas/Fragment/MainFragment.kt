@@ -51,19 +51,20 @@ import butterknife.OnClick
 class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLocationListener, WetherService.IOnGetWetherListener {
 
     @BindView(R.id.img_registSchedule)
-    var imgRegistSchedule: LinearLayout? = null
+    lateinit var imgRegistSchedule: LinearLayout
     @BindView(R.id.txt_main_scroll)
-    var txtMainScroll: ScrollTextView? = null
+    lateinit var txtMainScroll: ScrollTextView
     @BindView(R.id.img_wether_icon)
-    var imgWetherIcon: ImageView? = null
+    lateinit var imgWetherIcon: ImageView
     @BindView(R.id.temperature)
-    var temperature: TextView? = null
+    lateinit var temperature: TextView
     @BindView(R.id.weather)
-    var weather: TextView? = null
+    lateinit var weather: TextView
     @BindView(R.id.hight_low)
-    var hightLow: TextView? = null
+    lateinit var hightLow: TextView
     @BindView(R.id.windAndSD)
-    var windAndSD: TextView? = null
+    lateinit var windAndSD: TextView
+
     private var rootView: View? = null
     private var registScheduleFragment: RegistScheduleFragment? = null
     private var contactFragment: ContactFragment? = null

@@ -22,4 +22,12 @@
         <item>@color/seg_text_unselected_blue</item>
     </integer-array>
 
+    <string name="permission_camera_denied">被残忍拒绝.</string>
+    <string name="permission_camera_never_askagain">别再烦我!</string>
+
+    <string name="button_allow">确定</string>
+    <string name="button_deny">拒绝</string>
+
+    <string name="permission_camera_rationale">你别拒绝了哦，很严重的</string>
+
 </resources>

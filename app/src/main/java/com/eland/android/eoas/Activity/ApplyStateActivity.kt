@@ -31,9 +31,9 @@ import butterknife.ButterKnife
 class ApplyStateActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
 
     @BindView(R.id.applytoolbar)
-     var applytoolbar: Toolbar? = null
+    lateinit var applytoolbar: Toolbar
     @BindView(R.id.step)
-     var step: StepsView? = null
+    lateinit var step: StepsView
 
     private val TAG = "EOAS"
 

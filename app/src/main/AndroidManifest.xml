@@ -61,6 +61,8 @@
             android:value="ce9cd6d5807086878b038fb57983347c" >
         </meta-data>
 
+        <activity android:name=".Activity.BaseActivity" />
+
         <activity
             android:name=".Activity.LauncherActivity"
             android:theme="@style/NoAction"

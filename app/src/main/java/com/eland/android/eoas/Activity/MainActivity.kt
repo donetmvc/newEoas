@@ -37,7 +37,7 @@ import me.drakeet.materialdialog.MaterialDialog
 /**
  * Created by liu.wenbin on 15/11/10.
  */
-class MainActivity : AppCompatActivity(), ProgressUtil.IOnMainUpdateListener {
+class MainActivity : BaseActivity(), ProgressUtil.IOnMainUpdateListener {
 
     private val TAG = "EOAS"
     private var isExit: Boolean? = false

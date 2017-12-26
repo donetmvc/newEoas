@@ -45,9 +45,10 @@ import butterknife.ButterKnife
 class ContactFragment : Fragment, ContactService.IOnSearchContactListener {
 
     @BindView(R.id.listView)
-    var listView: ListView? = null
+    lateinit var listView: ListView
     @BindView(R.id.refresh)
-    var refresh: MaterialRefreshLayout? = null
+    lateinit var refresh: MaterialRefreshLayout
+
     private var rootView: View? = null
     internal var mLsit: MutableList<LoginInfo>? = null
     private var mAdapt: ContactAdapt? = null

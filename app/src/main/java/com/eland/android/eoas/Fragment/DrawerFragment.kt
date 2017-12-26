@@ -80,29 +80,30 @@ import me.drakeet.materialdialog.MaterialDialog
 class DrawerFragment : Fragment, ChooseImageUtil.IOnCarmerListener, ChooseImageUtil.IOnAlbumListener, UploadFileService.IOnUploadListener, PhoneNumberView.OnActionSheetSelected, UpdatePhoneNmService.IOnUpdateListener, ProgressUtil.IOnDialogConfirmListener {
 
     @BindView(R.id.img_photo)
-    var imgPhoto: CircleImageView? = null
+    lateinit var imgPhoto: CircleImageView
     @BindView(R.id.txt_name)
-    var txtName: TextView? = null
+    lateinit var txtName: TextView
     @BindView(R.id.txt_tel)
-    var txtTel: TextView? = null
+    lateinit var txtTel: TextView
     @BindView(R.id.img_more)
-    var imgMore: ImageView? = null
+    lateinit var imgMore: ImageView
     @BindView(R.id.txt_email)
-    var txtEmail: TextView? = null
+    lateinit var txtEmail: TextView
     @BindView(R.id.user_info_layout)
-    var userInfoLayout: RelativeLayout? = null
+    lateinit var userInfoLayout: RelativeLayout
     @BindView(R.id.txt_logout)
-    var txtLogout: TextView? = null
+    lateinit var txtLogout: TextView
     @BindView(R.id.lin_logout)
-    var linLogout: LinearLayout? = null
+    lateinit var linLogout: LinearLayout
     @BindView(R.id.txt_versionname)
-    var txtVersionname: TextView? = null
+    lateinit var txtVersionname: TextView
     @BindView(R.id.lin_update)
-    var linUpdate: LinearLayout? = null
+    lateinit var linUpdate: LinearLayout
     @BindView(R.id.txt_theme_red)
-    var txtThemeRed: TextView? = null
+    lateinit var txtThemeRed: TextView
     @BindView(R.id.txt_theme_blue)
-    var txtThemeBlue: TextView? = null
+    lateinit var txtThemeBlue: TextView
+
     private val TAG = "EOAS"
     private var mainActivity: MainActivity? = null
     private var rootView: View? = null

@@ -43,14 +43,13 @@ import butterknife.ButterKnife
 class ApplyListFragment : Fragment, ApplyListService.IOnSearchApplyListListener {
 
     @BindView(R.id.listView)
-    var listView: ListView? = null
+    lateinit var listView: ListView
     @BindView(R.id.refresh)
-    var refresh: MaterialRefreshLayout? = null
-    private var rootView: View? = null
+    lateinit var refresh: MaterialRefreshLayout
 
+    private var rootView: View? = null
     private var mList: List<ApplyListInfo>? = null
     private var mAdapt: ApplyListAdapt? = null
-
     internal var httpDialog: Dialog? = null
     private var startDate: String? = null
     private var endDate: String? = null

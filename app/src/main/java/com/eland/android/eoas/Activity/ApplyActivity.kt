@@ -46,31 +46,31 @@ import butterknife.BindView
 class ApplyActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
 
     @BindView(R.id.applytoolbar)
-     var applytoolbar: Toolbar? = null
+    lateinit var applytoolbar: Toolbar
     @BindView(R.id.spinner_vacationtype)
-     var spinnerVacationtype: Spinner? = null
+    lateinit var spinnerVacationtype: Spinner
     @BindView(R.id.txt_startdate)
-     var txtStartdate: TextView? = null
+    lateinit var txtStartdate: TextView
     @BindView(R.id.seg_starttime)
-     var segStarttime: SegmentView? = null
+    lateinit var segStarttime: SegmentView
     @BindView(R.id.txt_enddate)
-     var txtEnddate: TextView? = null
+    lateinit var txtEnddate: TextView
     @BindView(R.id.seg_endtime)
-     var segEndtime: SegmentView? = null
+    lateinit var segEndtime: SegmentView
     @BindView(R.id.btn_apply)
-     var btnApply: Button? = null
+    lateinit var btnApply: Button
     @BindView(R.id.txt_diffDays)
-     var txtDiffDays: TextView? = null
+    lateinit var txtDiffDays: TextView
     @BindView(R.id.edit_remark)
-     var editRemark: EditText? = null
+    lateinit var editRemark: EditText
     @BindView(R.id.txt_all_vacation)
-     var txtAllVacation: TextView? = null
+    lateinit var txtAllVacation: TextView
     @BindView(R.id.txt_year_vacation)
-     var txtYearVacation: TextView? = null
+    lateinit var txtYearVacation: TextView
     @BindView(R.id.txt_company_vacation)
-     var txtCompanyVacation: TextView? = null
+    lateinit var txtCompanyVacation: TextView
     @BindView(R.id.txt_adjust_vacation)
-     var txtAdjustVacation: TextView? = null
+    lateinit var txtAdjustVacation: TextView
 
     private var mUserId: String? = null
     private var startTime: String? = null
@@ -120,11 +120,11 @@ class ApplyActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
     private fun initView() {
         mUserId = SharedReferenceHelper.getInstance(this).getValue(Constant.LOGINID)
 
-        segStarttime!!.setSegmentText("08:00", 0)
-        segStarttime!!.setSegmentText("13:00", 1)
+        segStarttime.setSegmentText("08:00", 0)
+        segStarttime.setSegmentText("13:00", 1)
 
-        segEndtime!!.setSegmentText("13:00", 0)
-        segEndtime!!.setSegmentText("17:00", 1)
+        segEndtime.setSegmentText("13:00", 0)
+        segEndtime.setSegmentText("17:00", 1)
 
         val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
         val date = Date(System.currentTimeMillis())
@@ -146,17 +146,17 @@ class ApplyActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
     }
 
     private fun initToolbar() {
-        applytoolbar!!.setTitleTextColor(Color.parseColor("#ffffff")) //设置标题颜色
-        applytoolbar!!.title = "新申请"
+        applytoolbar.setTitleTextColor(Color.parseColor("#ffffff")) //设置标题颜色
+        applytoolbar.title = "新申请"
         setSupportActionBar(applytoolbar)
-        applytoolbar!!.setNavigationIcon(R.mipmap.icon_back)
+        applytoolbar.setNavigationIcon(R.mipmap.icon_back)
         supportActionBar!!.setHomeButtonEnabled(true) //设置返回键可用
 
-        applytoolbar!!.setNavigationOnClickListener { finish() }
+        applytoolbar.setNavigationOnClickListener { finish() }
     }
 
     private fun initSegment() {
-        segStarttime!!.setOnSegmentViewClickListener { v, position ->
+        segStarttime.setOnSegmentViewClickListener { v, position ->
             if (position == 0) {
                 //8点
                 //startTime = "08";
@@ -168,7 +168,7 @@ class ApplyActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
             getDiffDate()
         }
 
-        segEndtime!!.setOnSegmentViewClickListener { v, position ->
+        segEndtime.setOnSegmentViewClickListener { v, position ->
             if (position == 0) {
                 //13点
                 setTime(startTime, "13")
@@ -198,7 +198,7 @@ class ApplyActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
     }
 
     private fun setVacationType() {
-        val select = spinnerVacationtype!!.selectedItem.toString()
+        val select = spinnerVacationtype.selectedItem.toString()
         //find vacation code
         if (null != mList && mList!!.size > 0) {
             for (result in mList!!) {
@@ -235,8 +235,8 @@ class ApplyActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
         //            e.printStackTrace();
         //        }
 
-        txtStartdate!!.text = startDate
-        txtEnddate!!.text = endDate
+        txtStartdate.text = startDate
+        txtEnddate.text = endDate
     }
 
     private fun setTime(start: String?, end: String?) {
@@ -246,7 +246,7 @@ class ApplyActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
 
     private fun setDiffDays(diff: String) {
         diffDays = diff
-        txtDiffDays!!.text = diffDays!! + "天"
+        txtDiffDays.text = "${diffDays}天"
     }
 
     @OnClick(R.id.txt_startdate)

@@ -80,15 +80,15 @@ class ProxyAdapt(private val context: Context, private val list: List<ProxyInfo>
      */
     internal class ViewHolder(view: View) {
         @BindView(R.id.txt_orgName)
-        var txtOrgName: TextView? = null
+        lateinit var txtOrgName: TextView
         @BindView(R.id.txt_orgCode)
-        var txtOrgCode: TextView? = null
+        lateinit var txtOrgCode: TextView
         @BindView(R.id.spinner_proxy)
-        var spinnerProxy: Spinner? = null
+        lateinit var spinnerProxy: Spinner
         @BindView(R.id.txt_start)
-        var txtStart: TextView? = null
+        lateinit var txtStart: TextView
         @BindView(R.id.txt_end)
-        var txtEnd: TextView? = null
+        lateinit var txtEnd: TextView
 
         init {
             ButterKnife.bind(this, view)

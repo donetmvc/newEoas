@@ -42,9 +42,10 @@ import pl.droidsonroids.gif.GifImageView
 class RegistScheduleFragment : Fragment, AnimationListener, ScheduleService.IScheduleListener {
 
     @BindView(R.id.img_gif)
-    var imgGif: GifImageView? = null
+    lateinit var imgGif: GifImageView
     @BindView(R.id.txt_distance)
-    var txtDistance: TextView? = null
+    lateinit var txtDistance: TextView
+
     private val TAG = "EOAS"
     private var rootView: View? = null
     private var gifDrawable: GifDrawable? = null

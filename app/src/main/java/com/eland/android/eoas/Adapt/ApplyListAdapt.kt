@@ -93,17 +93,17 @@ class ApplyListAdapt : BaseAdapter {
      */
     internal class ViewHolder(view: View) {
         @BindView(R.id.img_vacationstate)
-        var imgVacationstate: ImageView? = null
+        lateinit var imgVacationstate: ImageView
         @BindView(R.id.txt_vacationtype)
-        var txtVacationtype: TextView? = null
+        lateinit var txtVacationtype: TextView
         @BindView(R.id.txt_vacationdays)
-        var txtVacationdays: TextView? = null
+        lateinit var txtVacationdays: TextView
         @BindView(R.id.txt_vacationtperiod)
-        var txtVacationtperiod: TextView? = null
+        lateinit var txtVacationtperiod: TextView
         @BindView(R.id.txt_vacationtremark)
-        var txtVacationtremark: TextView? = null
+        lateinit var txtVacationtremark: TextView
         @BindView(R.id.txt_vacationno)
-        var txtVacationno: TextView? = null
+        lateinit var txtVacationno: TextView
 
         init {
             ButterKnife.bind(this, view)

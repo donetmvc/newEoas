@@ -42,9 +42,9 @@ import butterknife.ButterKnife
 class ApproveListFragment : Fragment, ApproveListService.IOnApproveListListener {
 
     @BindView(R.id.listView)
-    var listView: ListView? = null
+    lateinit var listView: ListView
     @BindView(R.id.refresh)
-    var refresh: MaterialRefreshLayout? = null
+    lateinit var refresh: MaterialRefreshLayout
     private var rootView: View? = null
     private var mUserId: String? = null
 

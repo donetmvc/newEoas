@@ -141,25 +141,25 @@ class ContactAdapt : BaseAdapter {
      */
     internal class ViewHolder(view: View) {
         @BindView(R.id.img_photo)
-        var imgPhoto: CircleImageView? = null
+        lateinit var imgPhoto: CircleImageView
         @BindView(R.id.txt_name)
-        var txtName: TextView? = null
+        lateinit var txtName: TextView
         @BindView(R.id.txt_email)
-        var txtEmail: TextView? = null
+        lateinit var txtEmail: TextView
         @BindView(R.id.txt_tel)
-        var txtTel: TextView? = null
+        lateinit var txtTel: TextView
         @BindView(R.id.item_txt_call)
-        var itemTxtCall: TextView? = null
+        lateinit var itemTxtCall: TextView
         @BindView(R.id.item_action_call)
-        var itemActionCall: LinearLayout? = null
+        lateinit var itemActionCall: LinearLayout
         @BindView(R.id.item_txt_text)
-        var itemTxtText: TextView? = null
+        lateinit var itemTxtText: TextView
         @BindView(R.id.item_action_text)
-        var itemActionText: LinearLayout? = null
+        lateinit var itemActionText: LinearLayout
         @BindView(R.id.item_txt_email)
-        var itemTxtEmail: TextView? = null
+        lateinit var itemTxtEmail: TextView
         @BindView(R.id.item_action_email)
-        var itemActionEmail: LinearLayout? = null
+        lateinit var itemActionEmail: LinearLayout
 
         init {
             ButterKnife.bind(this, view)

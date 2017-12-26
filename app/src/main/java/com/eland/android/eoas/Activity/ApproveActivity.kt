@@ -37,21 +37,22 @@ import cn.jpush.android.api.JPushInterface
 class ApproveActivity : AppCompatActivity(), ApplyService.IOnApplyListener, ApproveService.IOnApproveListener {
 
     @BindView(R.id.approvetoolbar)
-     var approvetoolbar: Toolbar? = null
+    lateinit var approvetoolbar: Toolbar
     @BindView(R.id.txt_applyId)
-     var txtApplyId: TextView? = null
+    lateinit var txtApplyId: TextView
     @BindView(R.id.txt_content)
-     var txtContent: TextView? = null
+    lateinit var txtContent: TextView
     @BindView(R.id.txt_remark)
-     var txtRemark: TextView? = null
+    lateinit var txtRemark: TextView
     @BindView(R.id.step)
-     var step: StepsView? = null
+    lateinit var step: StepsView
     @BindView(R.id.btn_approve)
-     var btnApprove: Button? = null
+    lateinit var btnApprove: Button
     @BindView(R.id.btn_refuse)
-     var btnRefuse: Button? = null
+    lateinit var btnRefuse: Button
     @BindView(R.id.edit_remark)
-     var editRemark: EditText? = null
+    lateinit var editRemark: EditText
+
     private var mUserId: String? = null
     private var applyId: String? = null
     private var httpDialog: Dialog? = null

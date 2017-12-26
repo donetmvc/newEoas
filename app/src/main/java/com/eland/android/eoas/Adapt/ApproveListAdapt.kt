@@ -73,17 +73,17 @@ class ApproveListAdapt(private val context: Context, private val list: List<Appr
      */
     internal class ViewHolder(view: View) {
         @BindView(R.id.txt_applicant)
-        var txtApplicant: TextView? = null
+        lateinit var txtApplicant: TextView
         @BindView(R.id.txt_vacationName)
-        var txtVacationName: TextView? = null
+        lateinit var txtVacationName: TextView
         @BindView(R.id.txt_vacationdays)
-        var txtVacationdays: TextView? = null
+        lateinit var txtVacationdays: TextView
         @BindView(R.id.txt_vacationperiod)
-        var txtVacationperiod: TextView? = null
+        lateinit var txtVacationperiod: TextView
         @BindView(R.id.txt_remark)
-        var txtRemark: TextView? = null
+        lateinit var txtRemark: TextView
         @BindView(R.id.txt_applyId)
-        var txtApplyId: TextView? = null
+        lateinit var txtApplyId: TextView
 
         init {
             ButterKnife.bind(this, view)

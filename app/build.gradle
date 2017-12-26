@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 26
@@ -31,45 +33,44 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support:cardview-v7:26.1.0'
     implementation 'com.android.support:design:26.1.0'
-    compile('com.mikepenz:materialdrawer:4.5.1@aar') {
+    implementation('com.mikepenz:materialdrawer:4.5.1@aar') {
         transitive = true
     }
-    compile 'com.mikepenz:google-material-typeface:2.2.0.1@aar'
-    compile 'com.mikepenz:fontawesome-typeface:4.4.0.1@aar'
-    compile 'com.loopj.android:android-async-http:1.4.9'
-    compile(name: 'android-gif-drawable-1.1.10', ext: 'aar')
-    compile 'com.github.rey5137:material:1.2.2'
-    compile 'com.victor:lib:1.0.1'
-    compile 'me.drakeet.materialdialog:library:1.2.2'
-    compile files('libs/AMap_Location_V3.3.0_20170118.jar')
-    compile files('libs/Android_Map3D_SDK_V4.1.2_20161104.jar')
-    compile files('libs/universal-image-loader-1.9.5.jar')
-    compile files('libs/listviewanimations-2.6.0.jar')
-    compile files('libs/nineoldandroids-2.4.0.jar')
-    compile files('libs/pgyer_sdk_2.2.2.jar')
-    compile files('libs/jpush-android-2.0.5.jar')
-    compile 'me.leolin:ShortcutBadger:1.1.3@aar'
-    compile 'com.zhy:mpermission-api:1.0.0'
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile 'io.reactivex.rxjava2:rxjava:2.1.5'
-    compile 'com.google.code.gson:gson:2.8.2'
-    compile 'com.squareup.okhttp3:okhttp:3.9.0'
-    compile 'com.squareup.retrofit2:retrofit:2.3.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
-    compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
-    compile 'com.squareup.retrofit2:converter-scalars:2.3.0'
-    compile("com.github.hotchemi:permissionsdispatcher:3.0.1")
+    implementation 'com.mikepenz:google-material-typeface:2.2.0.1@aar'
+    implementation 'com.mikepenz:fontawesome-typeface:4.4.0.1@aar'
+    implementation 'com.loopj.android:android-async-http:1.4.9'
+    implementation(name: 'android-gif-drawable-1.1.10', ext: 'aar')
+    implementation 'com.github.rey5137:material:1.2.2'
+    implementation 'com.victor:lib:1.0.1'
+    implementation 'me.drakeet.materialdialog:library:1.2.2'
+    implementation files('libs/AMap_Location_V3.3.0_20170118.jar')
+    implementation files('libs/Android_Map3D_SDK_V4.1.2_20161104.jar')
+    implementation files('libs/universal-image-loader-1.9.5.jar')
+    implementation files('libs/listviewanimations-2.6.0.jar')
+    implementation files('libs/nineoldandroids-2.4.0.jar')
+    implementation files('libs/pgyer_sdk_2.2.2.jar')
+    implementation files('libs/jpush-android-2.0.5.jar')
+    implementation 'me.leolin:ShortcutBadger:1.1.3@aar'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.6'
+    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.squareup.okhttp3:okhttp:3.9.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.3.0'
+    implementation("com.github.hotchemi:permissionsdispatcher:3.0.1")
 //            {
 //        // if you don't use android.app.Fragment you can exclude support for them
 //        exclude module: "support-v13"
 //    }
     kapt "com.github.hotchemi:permissionsdispatcher-processor:3.0.1"
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    compile 'com.jakewharton:butterknife:8.8.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation 'com.jakewharton:butterknife:8.8.1'
     kapt 'com.jakewharton:butterknife-compiler:8.8.1'
 }
 repositories {

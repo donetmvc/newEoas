@@ -44,15 +44,16 @@ import butterknife.OnClick
 class SearchScheduleFragment : Fragment, SearchScheduleService.IOnSearchScheduleListener {
 
     @BindView(R.id.edit_startdate)
-    var editStartdate: EditText? = null
+    lateinit var editStartdate: EditText
     @BindView(R.id.edit_enddate)
-    var editEnddate: EditText? = null
+    lateinit var editEnddate: EditText
     @BindView(R.id.img_search)
-    var imgSearch: ImageView? = null
+    lateinit var imgSearch: ImageView
     @BindView(R.id.listView)
-    var listView: ListView? = null
+    lateinit var listView: ListView
     @BindView(R.id.refresh)
-    var refresh: MaterialRefreshLayout? = null
+    lateinit var refresh: MaterialRefreshLayout
+
     private var rootView: View? = null
     private var refreshType = REFRESHTYEP.NONE
     private var startDate: String? = null
