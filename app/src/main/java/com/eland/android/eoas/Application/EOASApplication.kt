@@ -21,7 +21,6 @@ import me.leolin.shortcutbadger.ShortcutBadger
 class EOASApplication : Application() {
 
     var TAG = "EOAS"
-
     var photoUri = "http://182.92.65.253:30001/Eland.EOAS/Images/"
 
     //    public String photoUri = "http://10.202.101.11:30002/Eland.EOAS/Images/";
@@ -37,7 +36,9 @@ class EOASApplication : Application() {
         JPushInterface.setDebugMode(false)
         JPushInterface.init(this)
 
-        initApplicantion()
+//        JPushInterface.stopPush(this)
+
+        //initApplicantion()
     }
 
     private fun initApplicantion() {

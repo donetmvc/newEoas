@@ -1,10 +1,8 @@
 package com.eland.android.eoas.Activity
 
 import android.content.Context
-import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.GravityCompat
@@ -21,7 +19,6 @@ import com.eland.android.eoas.Fragment.DrawerFragment
 import com.eland.android.eoas.Fragment.MainFragment
 import com.eland.android.eoas.Model.Constant
 import com.eland.android.eoas.R
-import com.eland.android.eoas.Util.HttpRequstUtil
 import com.eland.android.eoas.Util.ProgressUtil
 import com.eland.android.eoas.Util.SharedReferenceHelper
 import com.eland.android.eoas.Util.ToastUtil
@@ -37,7 +34,7 @@ import me.drakeet.materialdialog.MaterialDialog
 /**
  * Created by liu.wenbin on 15/11/10.
  */
-class MainActivity : BaseActivity(), ProgressUtil.IOnMainUpdateListener {
+class MainActivity : AppCompatActivity(), ProgressUtil.IOnMainUpdateListener {
 
     private val TAG = "EOAS"
     private var isExit: Boolean? = false

@@ -103,8 +103,8 @@ class SearchScheduleFragment : Fragment, SearchScheduleService.IOnSearchSchedule
 
         startDate = simpleDateFormat.format(cal.time)
         endDate = nowDate
-        editStartdate!!.setText(startDate)
-        editEnddate!!.setText(endDate)
+        editStartdate.setText(startDate)
+        editEnddate.setText(endDate)
 
         mUserId = SharedReferenceHelper.getInstance(context!!).getValue(Constant.LOGINID)
     }
@@ -116,11 +116,11 @@ class SearchScheduleFragment : Fragment, SearchScheduleService.IOnSearchSchedule
         val animAdapter = ScaleInAnimationAdapter(mAdapt)
         animAdapter.absListView = listView
         animAdapter.setInitialDelayMillis(300)
-        listView!!.adapter = animAdapter
+        listView.adapter = animAdapter
     }
 
     private fun initListener() {
-        refresh!!.setMaterialRefreshListener(object : MaterialRefreshListener() {
+        refresh.setMaterialRefreshListener(object : MaterialRefreshListener() {
             override fun onfinish() {
                 super.onfinish()
             }
@@ -136,12 +136,12 @@ class SearchScheduleFragment : Fragment, SearchScheduleService.IOnSearchSchedule
             override fun onRefreshLoadMore(materialRefreshLayout: MaterialRefreshLayout) {
                 super.onRefreshLoadMore(materialRefreshLayout)
 
-                refresh!!.finishRefresh()
+                refresh.finishRefresh()
                 refreshType = REFRESHTYEP.REFRESH
 
                 Handler().postDelayed({
                     if (null != refresh) {
-                        refresh!!.finishRefreshLoadMore()
+                        refresh.finishRefreshLoadMore()
                     }
                 }, 3000)
 
@@ -157,7 +157,7 @@ class SearchScheduleFragment : Fragment, SearchScheduleService.IOnSearchSchedule
 
                 val format = SimpleDateFormat("yyyy-MM-dd")
                 startDate = dialog.getFormattedDate(format)
-                editStartdate!!.setText(startDate)
+                editStartdate.setText(startDate)
                 super.onPositiveActionClicked(fragment)
             }
 
@@ -180,7 +180,7 @@ class SearchScheduleFragment : Fragment, SearchScheduleService.IOnSearchSchedule
 
                 val format = SimpleDateFormat("yyyy-MM-dd")
                 endDate = dialog.getFormattedDate(format)
-                editEnddate!!.setText(endDate)
+                editEnddate.setText(endDate)
                 super.onPositiveActionClicked(fragment)
             }
 
@@ -207,8 +207,8 @@ class SearchScheduleFragment : Fragment, SearchScheduleService.IOnSearchSchedule
 
     private fun clearLoading() {
         if (null != refresh) {
-            refresh!!.finishRefresh()
-            refresh!!.finishRefreshLoadMore()
+            refresh.finishRefresh()
+            refresh.finishRefreshLoadMore()
         }
         if (httpDialog != null && httpDialog!!.isShowing) {
             httpDialog!!.dismiss()
@@ -218,7 +218,7 @@ class SearchScheduleFragment : Fragment, SearchScheduleService.IOnSearchSchedule
     override fun onSuccess(list: List<ScheduleInfo>) {
         clearLoading()
 
-        if (null != list && list.size > 0) {
+        if (list.isNotEmpty()) {
             mList = list
             mAdapt!!.setList(mList!!)
             mAdapt!!.notifyDataSetChanged()

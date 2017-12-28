@@ -56,7 +56,7 @@ class ContactAdapt : BaseAdapter {
     }
 
     override fun getCount(): Int {
-        return if (lists!!.size == 0) 0 else lists!!.size
+        return if (lists!!.isEmpty()) 0 else lists!!.size
     }
 
     override fun getItem(i: Int): Any {
@@ -81,12 +81,12 @@ class ContactAdapt : BaseAdapter {
         }
 
         val dto = lists!![i]
-        viewHolder.txtName!!.text = dto.userName
-        viewHolder.txtEmail!!.text = dto.email
-        viewHolder.txtTel!!.text = dto.cellNo
-        imageLoader?.displayImage(dto.url, viewHolder.imgPhoto!!, options)
+        viewHolder.txtName.text = dto.userName
+        viewHolder.txtEmail.text = dto.email
+        viewHolder.txtTel.text = dto.cellNo
+        imageLoader?.displayImage(dto.url, viewHolder.imgPhoto, options)
 
-        viewHolder.itemActionCall!!.setOnClickListener(View.OnClickListener {
+        viewHolder.itemActionCall.setOnClickListener(View.OnClickListener {
             //ToastUtil.showToast(context, "打电话咯", Toast.LENGTH_LONG);
             val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + dto.cellNo))
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -104,12 +104,12 @@ class ContactAdapt : BaseAdapter {
             context!!.startActivity(intent)
         })
 
-        viewHolder.itemActionEmail!!.setOnClickListener {
+        viewHolder.itemActionEmail.setOnClickListener {
             //ToastUtil.showToast(context, "发邮件咯", Toast.LENGTH_LONG);
             sendEmail(dto.email!!)
         }
 
-        viewHolder.itemActionText!!.setOnClickListener {
+        viewHolder.itemActionText.setOnClickListener {
             //ToastUtil.showToast(context, "发短信咯", Toast.LENGTH_LONG);
             val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("smsto://" + dto.cellNo))
             context!!.startActivity(intent)

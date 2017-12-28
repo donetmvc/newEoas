@@ -24,7 +24,7 @@ class ApproveListAdapt(private val context: Context, private val list: List<Appr
     }
 
     override fun getCount(): Int {
-        return if (list.size == 0) 0 else list.size
+        return if (list.isEmpty()) 0 else list.size
     }
 
     override fun getItem(i: Int): Any {
@@ -49,18 +49,18 @@ class ApproveListAdapt(private val context: Context, private val list: List<Appr
 
         val dto = list[i]
 
-        viewHolder.txtApplicant!!.text = dto.applyUserName
-        viewHolder.txtRemark!!.text = dto.reason
-        viewHolder.txtVacationdays!!.text = dto.vacationDays + "天"
+        viewHolder.txtApplicant.text = dto.applyUserName
+        viewHolder.txtRemark.text = dto.reason
+        viewHolder.txtVacationdays.text = dto.vacationDays + "天"
 
         if (dto.vacationType!!.isEmpty() || dto.vacationType == "null") {
-            viewHolder.txtVacationName!!.text = dto.vacationTypeName
+            viewHolder.txtVacationName.text = dto.vacationTypeName
         } else {
-            viewHolder.txtVacationName!!.text = dto.vacationType
+            viewHolder.txtVacationName.text = dto.vacationType
         }
 
-        viewHolder.txtVacationperiod!!.text = dto.applyPeriod
-        viewHolder.txtApplyId!!.text = dto.applyId
+        viewHolder.txtVacationperiod.text = dto.applyPeriod
+        viewHolder.txtApplyId.text = dto.applyId
 
         return view
     }

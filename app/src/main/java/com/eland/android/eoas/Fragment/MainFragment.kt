@@ -117,10 +117,10 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
     }
 
     private fun setTitler() {
-        txtMainScroll!!.textContent = "用户ID: " + mUserId + "   欢迎使用移动OA办公系统!" + "  今天是   " + StringData()
-        txtMainScroll!!.textSize = 22
-        txtMainScroll!!.textColor = context!!.resources.getColor(R.color.text_color)
-        txtMainScroll!!.backgroundColor = Color.WHITE
+        txtMainScroll.textContent = "用户ID: " + mUserId + "   欢迎使用移动OA办公系统!" + "  今天是   " + StringData()
+        txtMainScroll.textSize = 22
+        txtMainScroll.textColor = context!!.resources.getColor(R.color.text_color)
+        txtMainScroll.backgroundColor = Color.WHITE
         //imageLoader.displayImage("http://app1.showapi.com/weather/icon/night/02.png", imgWetherIcon, options);
     }
 
@@ -306,20 +306,15 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
         mMonth = (c.get(Calendar.MONTH) + 1).toString()// 获取当前月份
         mDay = c.get(Calendar.DAY_OF_MONTH).toString()// 获取当前月份的日期号码
         mWay = c.get(Calendar.DAY_OF_WEEK).toString()
-        if ("1" == mWay) {
-            mWay = "天"
-        } else if ("2" == mWay) {
-            mWay = "一"
-        } else if ("3" == mWay) {
-            mWay = "二"
-        } else if ("4" == mWay) {
-            mWay = "三"
-        } else if ("5" == mWay) {
-            mWay = "四"
-        } else if ("6" == mWay) {
-            mWay = "五"
-        } else if ("7" == mWay) {
-            mWay = "六"
+
+        when(mWay) {
+            "1" -> mWay = "天"
+            "2" -> mWay = "一"
+            "3" -> mWay = "二"
+            "4" -> mWay = "三"
+            "5" -> mWay = "四"
+            "6" -> mWay = "五"
+            "7" -> mWay = "六"
         }
         return mYear + "年" + mMonth + "月" + mDay + "日" + "   星期" + mWay
     }
@@ -336,8 +331,8 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
     override fun onSuccess(list: List<ApproveListInfo>) {
         val intent = Intent(activity, DeskCountChangeReceiver::class.java)
         intent.action = "EOAS_COUNT_CHANGED"
-        intent.putExtra("COUNT", (if (list.size == 0) 0 else list.size).toString())
-        getContext().sendBroadcast(intent)
+        intent.putExtra("COUNT", (if (list.isEmpty()) 0 else list.size).toString())
+        context.sendBroadcast(intent)
     }
 
     override fun onFailure(code: Int, msg: String) {
@@ -345,10 +340,10 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
     }
 
     override fun onGetSucess(info: WetherInfo) {
-        temperature!!.text = info.temperature
-        weather!!.text = info.weather
-        hightLow!!.text = info.hightTemp + "℃/" + info.lowTemp + "℃"
-        windAndSD!!.text = info.wind_direction + "  " + info.wind_power + "  湿度  " + info.sd
+        temperature.text = info.temperature
+        weather.text = info.weather
+        hightLow.text = info.hightTemp + "℃/" + info.lowTemp + "℃"
+        windAndSD.text = info.wind_direction + "  " + info.wind_power + "  湿度  " + info.sd
         imageLoader!!.displayImage(info.weather_pic, imgWetherIcon!!, options)
     }
 

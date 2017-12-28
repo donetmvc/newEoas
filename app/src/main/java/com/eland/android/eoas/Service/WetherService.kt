@@ -1,6 +1,7 @@
 package com.eland.android.eoas.Service
 
 import android.content.Context
+import com.eland.android.eoas.Model.WetherData
 
 import com.eland.android.eoas.Model.WetherInfo
 import com.eland.android.eoas.Util.HttpRequstUtil
@@ -76,6 +77,7 @@ class WetherService(private val context: Context?) {
 
     interface IOnGetWetherListener {
         fun onGetSucess(weather: WetherInfo)
+        fun onGetSucess(weather: WetherData)
         fun onGetFailure(code: Int, message: String)
     }
 }

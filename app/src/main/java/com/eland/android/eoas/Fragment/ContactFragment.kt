@@ -104,11 +104,11 @@ class ContactFragment : Fragment, ContactService.IOnSearchContactListener {
     }
 
     private fun initListener() {
-        refresh!!.setMaterialRefreshListener(object : MaterialRefreshListener() {
+        refresh.setMaterialRefreshListener(object : MaterialRefreshListener() {
 
             override fun onRefresh(materialRefreshLayout: MaterialRefreshLayout) {
                 refreshType = REFRESH_TYPE.RERESH
-                refresh!!.finishRefreshLoadMore()
+                refresh.finishRefreshLoadMore()
 
                 getData()
             }
@@ -116,12 +116,10 @@ class ContactFragment : Fragment, ContactService.IOnSearchContactListener {
             override fun onRefreshLoadMore(materialRefreshLayout: MaterialRefreshLayout) {
                 super.onRefreshLoadMore(materialRefreshLayout)
                 refreshType = REFRESH_TYPE.LOAD
-                refresh!!.finishRefresh()
+                refresh.finishRefresh()
 
                 Handler().postDelayed({
-                    if (null != refresh) {
-                        refresh!!.finishRefreshLoadMore()
-                    }
+                    refresh.finishRefreshLoadMore()
                 }, 3000)
             }
 
@@ -145,7 +143,7 @@ class ContactFragment : Fragment, ContactService.IOnSearchContactListener {
         val animAdapter = ScaleInAnimationAdapter(mAdapt)
         animAdapter.absListView = listView
         animAdapter.setInitialDelayMillis(300)
-        listView!!.adapter = animAdapter
+        listView.adapter = animAdapter
     }
 
     private fun getData() {
@@ -176,22 +174,18 @@ class ContactFragment : Fragment, ContactService.IOnSearchContactListener {
     }
 
     private fun clearLoading() {
-        if (null != refresh) {
-            refresh!!.finishRefresh()
-            refresh!!.finishRefreshLoadMore()
-        }
+        refresh.finishRefresh()
+        refresh.finishRefreshLoadMore()
     }
 
     override fun onSearchSuccess(list: ArrayList<LoginInfo>) {
         clearLoading()
-        if (null != listView) {
-            //把数据加入缓存
-            CacheInfoUtil.saveContact(context, list)
+        //把数据加入缓存
+        CacheInfoUtil.saveContact(context, list)
 
-            mLsit!!.clear()
-            mLsit!!.addAll(list)
-            mAdapt!!.setList(mLsit!!)
-        }
+        mLsit!!.clear()
+        mLsit!!.addAll(list)
+        mAdapt!!.setList(mLsit!!)
     }
 
     override fun onSearchFailure(code: Int, msg: String) {

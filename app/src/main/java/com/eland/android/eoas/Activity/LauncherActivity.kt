@@ -1,9 +1,9 @@
 package com.eland.android.eoas.Activity
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 
 import com.eland.android.eoas.Model.Constant
 import com.eland.android.eoas.R
@@ -17,11 +17,11 @@ import cn.jpush.android.api.JPushInterface
 /**
  * Created by liu.wenbin on 15/11/10.
  */
-class LauncherActivity : Activity() {
+class LauncherActivity : AppCompatActivity() {
 
     private val TAG = "EOAS"
-    private var timer: Timer? = null
-    private var context: Context? = null
+    private lateinit var timer: Timer
+    private lateinit var context: Context
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,18 +32,18 @@ class LauncherActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
-        JPushInterface.onResume(this)
+        //JPushInterface.onResume(this)
     }
 
     override fun onPause() {
         super.onPause()
-        JPushInterface.onPause(this)
+        //JPushInterface.onPause(this)
     }
 
     private fun initTimer() {
         timer = Timer()
 
-        timer!!.schedule(object : TimerTask() {
+        timer.schedule(object : TimerTask() {
             override fun run() {
                 goLogin()
             }
@@ -51,18 +51,13 @@ class LauncherActivity : Activity() {
     }
 
     private fun goLogin() {
-
-        val isLogin = SharedReferenceHelper.getInstance(context!!).getValue(Constant.LOGIN_SUCCESS)
-        val intent: Intent
-
-        if (isLogin == "TRUE") {
-            intent = Intent(this@LauncherActivity, MainActivity::class.java)
+        val isLogin = SharedReferenceHelper.getInstance(context).getValue(Constant.LOGIN_SUCCESS)
+        var intent: Intent = if(isLogin == "TRUE") {
+            Intent(this@LauncherActivity, MainActivity::class.java)
         } else {
-            intent = Intent(this@LauncherActivity, LoginActivity::class.java)
+            Intent(this@LauncherActivity, LoginActivity::class.java)
         }
-
         startActivity(intent)
-
         finish()
     }
 }

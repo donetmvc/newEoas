@@ -112,13 +112,13 @@ class ApproveActivity : AppCompatActivity(), ApplyService.IOnApplyListener, Appr
     }
 
     private fun initToolbar() {
-        approvetoolbar!!.setTitleTextColor(Color.parseColor("#ffffff")) //设置标题颜色
-        approvetoolbar!!.title = "休假批准"
+        approvetoolbar.setTitleTextColor(Color.parseColor("#ffffff")) //设置标题颜色
+        approvetoolbar.title = "休假批准"
         setSupportActionBar(approvetoolbar)
-        approvetoolbar!!.setNavigationIcon(R.mipmap.icon_back)
+        approvetoolbar.setNavigationIcon(R.mipmap.icon_back)
         supportActionBar!!.setHomeButtonEnabled(true) //设置返回键可用
 
-        approvetoolbar!!.setNavigationOnClickListener { finish() }
+        approvetoolbar.setNavigationOnClickListener { finish() }
     }
 
     private fun initView() {
@@ -141,13 +141,13 @@ class ApproveActivity : AppCompatActivity(), ApplyService.IOnApplyListener, Appr
             httpDialog = ProgressUtil().showHttpLoading(this)
         }
         httpDialog!!.show()
-        approveService!!.saveApprove(mUserId!!, "01", editRemark!!.text.toString(), applyId!!, this)
+        approveService!!.saveApprove(mUserId!!, "01", editRemark.text.toString(), applyId!!, this)
     }
 
     @OnClick(R.id.btn_refuse)
     internal fun refuse() {
 
-        if (editRemark!!.text.toString().isEmpty()) {
+        if (editRemark.text.toString().isEmpty()) {
             ToastUtil.showToast(this, "拒绝必须填写理由", Toast.LENGTH_LONG)
             return
         }
@@ -156,7 +156,7 @@ class ApproveActivity : AppCompatActivity(), ApplyService.IOnApplyListener, Appr
             httpDialog = ProgressUtil().showHttpLoading(this)
         }
         httpDialog!!.show()
-        approveService!!.saveApprove(mUserId!!, "02", editRemark!!.text.toString(), applyId!!, this)
+        approveService!!.saveApprove(mUserId!!, "02", editRemark.text.toString(), applyId!!, this)
     }
 
     override fun onSuccess(obj: JSONObject?) {
@@ -180,7 +180,7 @@ class ApproveActivity : AppCompatActivity(), ApplyService.IOnApplyListener, Appr
                 e.printStackTrace()
             }
 
-            step!!.setLabels(approves)
+            step.setLabels(approves)
                     .setBarColor(Color.GRAY)
                     .setLabelColor(Color.GRAY)
                     .setColorIndicator(resources.getColor(R.color.md_red_500)).completedPosition = if (approvePosition == 0) 0 else approvePosition - 1
@@ -223,9 +223,9 @@ class ApproveActivity : AppCompatActivity(), ApplyService.IOnApplyListener, Appr
                 this@ApproveActivity.finish()
             }
         } else {
-            txtApplyId!!.text = "【$applyId】"
-            txtContent!!.text = content
-            txtRemark!!.text = reason
+            txtApplyId.text = "【$applyId】"
+            txtContent.text = content
+            txtRemark.text = reason
 
             applyService!!.searchApprogressList(mUserId!!, applyId!!, this)
         }

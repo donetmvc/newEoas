@@ -38,7 +38,7 @@ class ScheduleAdapt : BaseAdapter {
     }
 
     override fun getCount(): Int {
-        return if (list!!.size == 0) 0 else list!!.size
+        return if (list!!.isEmpty()) 0 else list!!.size
     }
 
     override fun getItem(i: Int): Any {
@@ -65,28 +65,28 @@ class ScheduleAdapt : BaseAdapter {
         val scheduleInfo = list!![i]
 
         if (null != scheduleInfo) {
-            viewHolder.txtDate!!.text = scheduleInfo.date
-            viewHolder.txtWork!!.text = scheduleInfo.work
+            viewHolder.txtDate.text = scheduleInfo.date
+            viewHolder.txtWork.text = scheduleInfo.work
             viewHolder.txtWorkdes!!.text = scheduleInfo.workdes
 
             if (scheduleInfo.workdes!!.isEmpty()) {
 
             } else if (scheduleInfo.workdes == "迟到" || scheduleInfo.workdes == "旷工") {
-                viewHolder.txtWorkdes!!.setTextColor(context!!.resources.getColor(R.color.md_red_500))
+                viewHolder.txtWorkdes.setTextColor(context!!.resources.getColor(R.color.md_red_500))
                 //viewHolder.txtWorkdes.setBackgroundColor(context.getResources().getColor(R.color.md_red_500));
             } else {
-                viewHolder.txtWorkdes!!.setTextColor(context!!.resources.getColor(R.color.green))
+                viewHolder.txtWorkdes.setTextColor(context!!.resources.getColor(R.color.green))
             }
 
-            viewHolder.txtOffwork!!.text = scheduleInfo.offwork
-            viewHolder.txtOffworkdes!!.text = scheduleInfo.offworkdes
+            viewHolder.txtOffwork.text = scheduleInfo.offwork
+            viewHolder.txtOffworkdes.text = scheduleInfo.offworkdes
 
             if (scheduleInfo.offworkdes!!.isEmpty()) {
 
             } else if (scheduleInfo.offworkdes == "早退" || scheduleInfo.offworkdes == "旷工") {
-                viewHolder.txtOffworkdes!!.setTextColor(context!!.resources.getColor(R.color.md_red_500))
+                viewHolder.txtOffworkdes.setTextColor(context!!.resources.getColor(R.color.md_red_500))
             } else {
-                viewHolder.txtOffworkdes!!.setTextColor(context!!.resources.getColor(R.color.green))
+                viewHolder.txtOffworkdes.setTextColor(context!!.resources.getColor(R.color.green))
             }
         }
 

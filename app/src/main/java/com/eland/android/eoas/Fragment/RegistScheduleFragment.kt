@@ -30,6 +30,7 @@ import java.util.GregorianCalendar
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.eland.android.eoas.DeviceInfoFactory.GetDeviceInfo
 import com.eland.android.eoas.Service.*
 import com.eland.android.eoas.Service.RegWorkInfoService.Companion.distance
 import pl.droidsonroids.gif.AnimationListener
@@ -134,8 +135,8 @@ class RegistScheduleFragment : Fragment, AnimationListener, ScheduleService.ISch
     private fun initFragment() {
         scheduleService = ScheduleService(context)
         scheduleService!!.setOnScheduleListener(this)
-        telephonyManager = context!!.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-        imei = telephonyManager?.deviceId
+//        telephonyManager = context!!.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        imei = GetDeviceInfo(context).getDeviceId() //telephonyManager?.deviceId
         val gregorianCalendar = GregorianCalendar()
         am_pm = gregorianCalendar.get(GregorianCalendar.AM_PM)
         if (am_pm == 0) {
@@ -158,8 +159,8 @@ class RegistScheduleFragment : Fragment, AnimationListener, ScheduleService.ISch
 
     private fun setActiveImg() {
         try {
-            gifDrawable = GifDrawable(getContext().resources, R.drawable.schedule_active)
-            imgGif!!.setImageDrawable(gifDrawable)
+            gifDrawable = GifDrawable(context.resources, R.drawable.schedule_active)
+            imgGif.setImageDrawable(gifDrawable)
             gifDrawable!!.start()
         } catch (e: IOException) {
             e.printStackTrace()
@@ -169,9 +170,9 @@ class RegistScheduleFragment : Fragment, AnimationListener, ScheduleService.ISch
     }
 
     private fun startRegist() {
-        if (isAM == "AM") {
+        if (isAM == "PM") {
             val intent = Intent(context, RegWorkInfoService::class.java)
-            context!!.bindService(intent, conn!!, Context.BIND_AUTO_CREATE)
+            context.bindService(intent, conn, Context.BIND_AUTO_CREATE)
         } else {
             scheduleService!!.regSchedulePM(imei!!, isAM!!)
         }
@@ -181,11 +182,11 @@ class RegistScheduleFragment : Fragment, AnimationListener, ScheduleService.ISch
         if (null != gifDrawable && gifDrawable!!.isPlaying) {
             //gifDrawable.stop();
             gifDrawable!!.recycle()
-            val theme = SharedReferenceHelper.getInstance(getContext()).getValue(Constant.EOAS_THEME)
+            val theme = SharedReferenceHelper.getInstance(context).getValue(Constant.EOAS_THEME)
             if (!theme.isEmpty() && theme == "RED") {
-                imgGif!!.setImageDrawable(context!!.resources.getDrawable(R.drawable.schedule_nomor))
+                imgGif.setImageDrawable(context.resources.getDrawable(R.drawable.schedule_nomor))
             } else {
-                imgGif!!.setImageDrawable(context!!.resources.getDrawable(R.drawable.schedule_nomor_blue))
+                imgGif.setImageDrawable(context.resources.getDrawable(R.drawable.schedule_nomor_blue))
             }
             gifDrawable = null
         }
@@ -193,11 +194,14 @@ class RegistScheduleFragment : Fragment, AnimationListener, ScheduleService.ISch
     }
 
     private fun stopRegist() {
-        if (SystemMethodUtil.isWorked(getContext(), "RegWorkInfoService")) {
+        if (SystemMethodUtil.isWorked(context, "RegWorkInfoService")) {
             ConsoleUtil.i(TAG, "---------------Service is running,you can stop it.--------------")
             if (null != conn) {
-                context!!.unbindService(conn!!)
+                context!!.unbindService(conn)
                 ConsoleUtil.i(TAG, "---------------stop success.--------------")
+            }
+            if(null != regWorkInfoService) {
+                regWorkInfoService!!.stopService()
             }
         }
     }
@@ -209,6 +213,7 @@ class RegistScheduleFragment : Fragment, AnimationListener, ScheduleService.ISch
     override fun onDestroyView() {
         super.onDestroyView()
         scheduleService!!.cancel()
+        stopRegist()
 //        ButterKnife.unbind(this)
     }
 
@@ -220,17 +225,25 @@ class RegistScheduleFragment : Fragment, AnimationListener, ScheduleService.ISch
     }
 
     override fun onScheduleSuccess() {
-        if (context != null && imgGif != null) {
+        if (context != null) {
             ToastUtil.showToast(context, "打卡成功.", Toast.LENGTH_LONG)
             setDisableImg()
         }
     }
 
     override fun onScheduleFailure(code: Int, msg: String?) {
-        if (context != null && imgGif != null) {
+        if (context != null) {
             ToastUtil.showToast(context, msg!!, Toast.LENGTH_LONG)
             setDisableImg()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
+    override fun onDetach() {
+        super.onDetach()
     }
 
     companion object {

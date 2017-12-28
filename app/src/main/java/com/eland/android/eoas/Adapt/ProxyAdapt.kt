@@ -28,7 +28,7 @@ class ProxyAdapt(private val context: Context, private val list: List<ProxyInfo>
 
 
     override fun getCount(): Int {
-        return if (list.size == 0) 0 else list.size
+        return if (list.isEmpty()) 0 else list.size
     }
 
     override fun getItem(i: Int): Any {
@@ -52,22 +52,22 @@ class ProxyAdapt(private val context: Context, private val list: List<ProxyInfo>
 
         val proxyInfo = list[i]
 
-        viewHolder.txtOrgName!!.text = proxyInfo.OrgName
-        viewHolder.txtOrgCode!!.text = proxyInfo.OrgCode
-        viewHolder.txtStart!!.text = startDate
-        viewHolder.txtEnd!!.text = endDate
+        viewHolder.txtOrgName.text = proxyInfo.OrgName
+        viewHolder.txtOrgCode.text = proxyInfo.OrgCode
+        viewHolder.txtStart.text = startDate
+        viewHolder.txtEnd.text = endDate
 
         val proxyUser = arrayOfNulls<String>(proxyInfo.proxyInfoList!!.size)
         var dto: ProxyUserInfo
         for (j in proxyUser.indices) {
-            dto = proxyInfo!!.proxyInfoList!![j]
+            dto = proxyInfo.proxyInfoList!![j]
             proxyUser[j] = dto.UserName
         }
 
         val adapter = ArrayAdapter<String>(context,
                 R.layout.vacation_spinner_layout, proxyUser)
         adapter.setDropDownViewResource(R.layout.vacation_spinner_dropdown)
-        viewHolder.spinnerProxy!!.adapter = adapter
+        viewHolder.spinnerProxy.adapter = adapter
 
         return view
     }

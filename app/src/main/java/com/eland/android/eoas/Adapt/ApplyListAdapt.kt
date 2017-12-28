@@ -67,20 +67,20 @@ class ApplyListAdapt : BaseAdapter {
 
         if (dto.processStateCode == "01") {
             //审批开始
-            viewHolder.imgVacationstate!!.setImageResource(R.mipmap.apply_wait_icon)
+            viewHolder.imgVacationstate.setImageResource(R.mipmap.apply_wait_icon)
         } else if (dto.processStateCode == "02") {
             //审批进行中
-            viewHolder.imgVacationstate!!.setImageResource(R.mipmap.apply_wait_icon)
+            viewHolder.imgVacationstate.setImageResource(R.mipmap.apply_wait_icon)
         } else {
             //审批结束
-            viewHolder.imgVacationstate!!.setImageResource(R.mipmap.apply_success_icon)
+            viewHolder.imgVacationstate.setImageResource(R.mipmap.apply_success_icon)
         }
 
-        viewHolder.txtVacationtype!!.text = dto.vacationTypeName
-        viewHolder.txtVacationdays!!.text = dto.vacationDays + "天"
-        viewHolder.txtVacationtperiod!!.text = dto.vacationPeriod
-        viewHolder.txtVacationtremark!!.text = dto.remarks
-        viewHolder.txtVacationno!!.text = dto.vacationNo
+        viewHolder.txtVacationtype.text = dto.vacationTypeName
+        viewHolder.txtVacationdays.text = dto.vacationDays + "天"
+        viewHolder.txtVacationtperiod.text = dto.vacationPeriod
+        viewHolder.txtVacationtremark.text = dto.remarks
+        viewHolder.txtVacationno.text = dto.vacationNo
 
         return view
     }

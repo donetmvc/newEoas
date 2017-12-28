@@ -12,14 +12,6 @@ class BaseApi {
     init {
     }
 
-//    fun main(vararg arr: String) {
-//        arr.flatMap {
-//            it.split("_")
-//        }.map {
-//            print("$it ")
-//        }
-//    }
-
     inner class ChildApi(val child:String, childs: String) {
         private var towChild:String? = null
 
@@ -36,7 +28,7 @@ class BaseApi {
     }
 
     companion object {
-        private val _baseUri: String = "http://182.92.65.253:30001/"
+        private val _baseUri: String = "http://api.apixu.com"
         private val _timeOut: Long = 10
         private var httpManange: HttpManager? = null
 

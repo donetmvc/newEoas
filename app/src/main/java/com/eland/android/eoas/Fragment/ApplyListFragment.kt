@@ -105,15 +105,15 @@ class ApplyListFragment : Fragment, ApplyListService.IOnSearchApplyListListener 
         val animAdapter = ScaleInAnimationAdapter(mAdapt)
         animAdapter.absListView = listView
         animAdapter.setInitialDelayMillis(300)
-        listView!!.adapter = animAdapter
+        listView.adapter = animAdapter
     }
 
     private fun initListener() {
-        refresh!!.setMaterialRefreshListener(object : MaterialRefreshListener() {
+        refresh.setMaterialRefreshListener(object : MaterialRefreshListener() {
 
             override fun onRefresh(materialRefreshLayout: MaterialRefreshLayout) {
                 refreshType = REFRESH_TYPE.RERESH
-                refresh!!.finishRefreshLoadMore()
+                refresh.finishRefreshLoadMore()
 
                 getData()
             }
@@ -121,12 +121,10 @@ class ApplyListFragment : Fragment, ApplyListService.IOnSearchApplyListListener 
             override fun onRefreshLoadMore(materialRefreshLayout: MaterialRefreshLayout) {
                 super.onRefreshLoadMore(materialRefreshLayout)
                 refreshType = REFRESH_TYPE.LOAD
-                refresh!!.finishRefresh()
+                refresh.finishRefresh()
 
                 Handler().postDelayed({
-                    if (null != refresh) {
-                        refresh!!.finishRefreshLoadMore()
-                    }
+                    refresh.finishRefreshLoadMore()
                 }, 3000)
             }
 
@@ -136,7 +134,7 @@ class ApplyListFragment : Fragment, ApplyListService.IOnSearchApplyListListener 
 
         })
 
-        listView!!.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, i, l ->
+        listView.onItemClickListener = AdapterView.OnItemClickListener { _, view, _, _ ->
             val txtNo = view.findViewById(R.id.txt_vacationno) as TextView
             val vacationNo = txtNo.text.toString()
 
@@ -193,17 +191,13 @@ class ApplyListFragment : Fragment, ApplyListService.IOnSearchApplyListListener 
     }
 
     override fun onSearchFailure(code: Int, msg: String) {
-        if (listView != null) {
-            ToastUtil.showToast(context, msg, Toast.LENGTH_LONG)
-            clearLoading()
-        }
+        ToastUtil.showToast(context, msg, Toast.LENGTH_LONG)
+        clearLoading()
     }
 
     private fun clearLoading() {
-        if (null != refresh) {
-            refresh!!.finishRefresh()
-            refresh!!.finishRefreshLoadMore()
-        }
+        refresh.finishRefresh()
+        refresh.finishRefreshLoadMore()
         if (httpDialog != null && httpDialog!!.isShowing) {
             httpDialog!!.dismiss()
         }

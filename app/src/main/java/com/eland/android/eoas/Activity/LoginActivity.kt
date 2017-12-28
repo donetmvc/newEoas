@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.telephony.TelephonyManager
@@ -28,12 +29,14 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import cn.jpush.android.api.JPushInterface
+import com.eland.android.eoas.DeviceInfoFactory.GetDeviceInfo
 import me.drakeet.materialdialog.MaterialDialog
+import permissions.dispatcher.PermissionUtils
 
 /**
  * Created by liu.wenbin on 15/11/10.
  */
-class LoginActivity : AppCompatActivity(), LoginService.ISignInListener, ProgressUtil.IOnDialogConfirmListener {
+class LoginActivity : BaseActivity(), LoginService.ISignInListener, ProgressUtil.IOnDialogConfirmListener {
 
     @BindView(R.id.edit_username)
     lateinit var editUsername: EditTextView
@@ -43,11 +46,11 @@ class LoginActivity : AppCompatActivity(), LoginService.ISignInListener, Progres
     lateinit var btnLogin: Button
 
     private val TAG = "EOAS"
-    private var progressDialog: Dialog? = null
-    private var context: Context? = null
-    private var loginService: LoginService? = null
-    private var telephonyManager: TelephonyManager? = null
-    private var loginId: String? = null
+    private lateinit var progressDialog: Dialog
+    private lateinit var context: Context
+    private lateinit var loginService: LoginService
+    private lateinit var telephonyManager: TelephonyManager
+    private var loginId: String = ""
     private var password = ""
     private var loginFailCount = 0
 
@@ -56,6 +59,7 @@ class LoginActivity : AppCompatActivity(), LoginService.ISignInListener, Progres
     private var dialogUtil: ProgressUtil? = null
     private var updateDialog: MaterialDialog? = null
     private var theme = ""
+    private var imei = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         theme = SharedReferenceHelper.getInstance(this).getValue(Constant.EOAS_THEME)
@@ -76,6 +80,7 @@ class LoginActivity : AppCompatActivity(), LoginService.ISignInListener, Progres
 
         initActivity()
         initUpdate()
+        initImei()
     }
 
     @OnClick(R.id.btn_login)
@@ -83,9 +88,9 @@ class LoginActivity : AppCompatActivity(), LoginService.ISignInListener, Progres
         val isGo = invalidateInput()
 
         if (isGo) {
-            progressDialog = ProgressUtil().showProgress(context!!)
-
-            loginService!!.signIn(loginId!!, password, "", telephonyManager!!.deviceId)
+            progressDialog = ProgressUtil().showProgress(context)
+            ConsoleUtil.i(TAG, "--------imei value----=========$imei")
+            loginService!!.signIn(loginId!!, password, "", imei)
         }
     }
 
@@ -93,7 +98,7 @@ class LoginActivity : AppCompatActivity(), LoginService.ISignInListener, Progres
         //如果进入登录页面说明还未登录，暂不能接收push
         JPushInterface.stopPush(applicationContext)
 
-        loginService = LoginService(context!!)
+        loginService = LoginService(context)
         loginService!!.setOnSignInListener(this)
         telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
 
@@ -121,27 +126,31 @@ class LoginActivity : AppCompatActivity(), LoginService.ISignInListener, Progres
         PgyUpdateManager.register(this, updateManagerListener)
     }
 
+    private fun initImei() {
+        imei = GetDeviceInfo(this).getDeviceId()
+    }
+
     private fun invalidateInput(): Boolean {
-        loginId = editUsername!!.text.toString()
-        password = editPassword!!.text.toString()
+        loginId = editUsername.text.toString()
+        password = editPassword.text.toString()
 
         if (loginId!!.isEmpty() && password.isEmpty()) {
-            editUsername!!.setShakeAnimation()
-            editPassword!!.setShakeAnimation()
+            editUsername.setShakeAnimation()
+            editPassword.setShakeAnimation()
 
             ToastUtil.showToast(this, "用户名或密码不能为空", Toast.LENGTH_LONG)
             return false
         }
 
         if (loginId!!.isEmpty()) {
-            editUsername!!.setShakeAnimation()
+            editUsername.setShakeAnimation()
 
             ToastUtil.showToast(this, "用户名不能为空", Toast.LENGTH_LONG)
             return false
         }
 
         if (password.isEmpty()) {
-            editPassword!!.setShakeAnimation()
+            editPassword.setShakeAnimation()
 
             ToastUtil.showToast(this, "密码不能为空", Toast.LENGTH_LONG)
             return false
@@ -197,7 +206,7 @@ class LoginActivity : AppCompatActivity(), LoginService.ISignInListener, Progres
         } else {
             loginFailCount++
             ConsoleUtil.i(TAG, "--------try login again------------")
-            loginService!!.signIn(loginId!!, password, "", telephonyManager!!.deviceId)
+            loginService!!.signIn(loginId!!, password, "", imei)
         }
     }
 

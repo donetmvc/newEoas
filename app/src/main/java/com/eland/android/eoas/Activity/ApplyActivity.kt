@@ -329,19 +329,19 @@ class ApplyActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
 
         //06 - adjust 07 - year 11 - company
         if (vacationTypeCode == "06") {
-            val adjust = java.lang.Double.valueOf(txtAdjustVacation!!.text.toString())!!
+            val adjust = java.lang.Double.valueOf(txtAdjustVacation.text.toString())!!
             if (all >= adjust || java.lang.Double.valueOf(diffDays) > adjust) {
                 ToastUtil.showToast(this, "调休假不足，请选择其他休假类型", Toast.LENGTH_LONG)
                 return false
             }
         } else if (vacationTypeCode == "07") {
-            val years = java.lang.Double.valueOf(txtYearVacation!!.text.toString())!!
+            val years = java.lang.Double.valueOf(txtYearVacation.text.toString())!!
             if (all >= years || java.lang.Double.valueOf(diffDays) > years) {
                 ToastUtil.showToast(this, "年休假不足，请选择其他休假类型", Toast.LENGTH_LONG)
                 return false
             }
         } else if (vacationTypeCode == "11") {
-            val company = java.lang.Double.valueOf(txtCompanyVacation!!.text.toString())!!
+            val company = java.lang.Double.valueOf(txtCompanyVacation.text.toString())!!
             if (all >= company || java.lang.Double.valueOf(diffDays) > company) {
                 ToastUtil.showToast(this, "企业年休假不足，请选择其他休假类型", Toast.LENGTH_LONG)
                 return false
@@ -370,7 +370,7 @@ class ApplyActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
         }
 
         applyService!!.saveApply(mUserId!!, startDate!!, endDate!!, startTime!!, endTime!!, vacationTypeCode, diffDays!!,
-                editRemark!!.text.toString(), this)
+                editRemark.text.toString(), this)
     }
 
     override fun onSuccess(obj: JSONObject?) {
@@ -384,10 +384,10 @@ class ApplyActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
                         java.lang.Float.valueOf(adjustVacation)!! +
                         java.lang.Float.valueOf(companyVacation)!!
 
-                txtYearVacation!!.text = yearVacation
-                txtCompanyVacation!!.text = companyVacation
-                txtAdjustVacation!!.text = adjustVacation
-                txtAllVacation!!.text = all.toString()
+                txtYearVacation.text = yearVacation
+                txtCompanyVacation.text = companyVacation
+                txtAdjustVacation.text = adjustVacation
+                txtAllVacation.text = all.toString()
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
@@ -421,7 +421,7 @@ class ApplyActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
 
         val adapter = ArrayAdapter<String>(this@ApplyActivity, R.layout.vacation_spinner_layout, vacationTypes)
         adapter.setDropDownViewResource(R.layout.vacation_spinner_dropdown)
-        spinnerVacationtype!!.adapter = adapter
+        spinnerVacationtype.adapter = adapter
 
         if (httpDialog!!.isShowing) {
             httpDialog!!.dismiss()

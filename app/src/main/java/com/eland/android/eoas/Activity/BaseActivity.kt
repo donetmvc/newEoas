@@ -1,10 +1,12 @@
 package com.eland.android.eoas.Activity
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.widget.Toast
-import com.eland.android.eoas.R
+import android.telephony.TelephonyManager
 import permissions.dispatcher.*
 
 /**
@@ -19,32 +21,46 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     fun checkAppPermission() {
-        showPhoneStateWithPermissionCheck()
+        if(!PermissionUtils.hasSelfPermissions(this,
+                READ_EXTERNAL_STORAGE_PERMISSION,
+                WRITE_EXTERNAL_STORAGE_PERMISSION,
+                READ_PHONE_STATE_PERMISSION,
+                CAMERA_PERMISSION,
+                ACCESS_FINE_LOCATION_PEMISSION)) {
+            showPermissionWithPermissionCheck()
+        }
     }
 
-
-    @NeedsPermission(READ_PHONE_STATE_PERMISSION)
-    fun showPhoneState() {
-
+    @SuppressLint("NeedOnRequestPermissionsResult")
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        // NOTE: delegate the permission handling to generated method
+        onRequestPermissionsResult(requestCode, grantResults)
+//        if(permissions.isNotEmpty()) {
+//            when(permissions.first()) {
+//                READ_PHONE_STATE_PERMISSION -> if(grantResults[requestCode] == 0) getIMEI() else imei = ""
+//            }
+//        }
     }
 
-    @OnShowRationale(READ_PHONE_STATE_PERMISSION)
-    fun showRationaleForPhoneState(request: PermissionRequest) {
-        //showRationaleDialog(R.string.permission_camera_rationale, request)
-    }
+    @NeedsPermission(
+            READ_EXTERNAL_STORAGE_PERMISSION,
+            WRITE_EXTERNAL_STORAGE_PERMISSION,
+            READ_PHONE_STATE_PERMISSION,
+            CAMERA_PERMISSION,
+            ACCESS_FINE_LOCATION_PEMISSION)
+    fun showPermission() {
 
-    @OnPermissionDenied(READ_PHONE_STATE_PERMISSION)
-    fun onPhoneStateDenied() {
-        Toast.makeText(this, R.string.permission_camera_denied, Toast.LENGTH_SHORT).show()
-    }
-
-    @OnNeverAskAgain(READ_PHONE_STATE_PERMISSION)
-    fun onPhoneStateNeverAskAgain() {
-        Toast.makeText(this, R.string.permission_camera_never_askagain, Toast.LENGTH_SHORT).show()
     }
 
     companion object {
         const val READ_PHONE_STATE_PERMISSION: String = Manifest.permission.READ_PHONE_STATE
         const val CAMERA_PERMISSION: String = Manifest.permission.CAMERA
+        const val WRITE_EXTERNAL_STORAGE_PERMISSION: String = Manifest.permission.WRITE_EXTERNAL_STORAGE
+        const val READ_EXTERNAL_STORAGE_PERMISSION: String = Manifest.permission.READ_EXTERNAL_STORAGE
+        const val ACCESS_FINE_LOCATION_PEMISSION: String = Manifest.permission.ACCESS_FINE_LOCATION
+
+
+        lateinit  var imei: String;
     }
 }

@@ -84,29 +84,29 @@ class SearchActivity : AppCompatActivity(), ContactService.IOnSearchContactListe
         imageLoader!!.init(ImageLoaderConfiguration.createDefault(this))
 
         initToolbar()
-        editText = searchtoolbar!!.findViewById(R.id.edit_searchKey) as EditText
+        editText = searchtoolbar.findViewById(R.id.edit_searchKey) as EditText
         userId = SharedReferenceHelper.getInstance(this).getValue(Constant.LOGINID)
 
         initRefreshListener()
     }
 
     private fun initRefreshListener() {
-        refresh!!.setMaterialRefreshListener(object : MaterialRefreshListener() {
+        refresh.setMaterialRefreshListener(object : MaterialRefreshListener() {
             override fun onRefresh(materialRefreshLayout: MaterialRefreshLayout) {
-                refresh!!.finishRefresh()
+                refresh.finishRefresh()
             }
         })
     }
 
     private fun initToolbar() {
-        searchtoolbar!!.setTitleTextColor(Color.parseColor("#ffffff")) //设置标题颜色
-        searchtoolbar!!.title = ""
+        searchtoolbar.setTitleTextColor(Color.parseColor("#ffffff")) //设置标题颜色
+        searchtoolbar.title = ""
         setSupportActionBar(searchtoolbar)
-        searchtoolbar!!.setNavigationIcon(R.mipmap.icon_back)
+        searchtoolbar.setNavigationIcon(R.mipmap.icon_back)
         supportActionBar!!.setHomeButtonEnabled(true) //设置返回键可用
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        searchtoolbar!!.setNavigationOnClickListener { finish() }
+        searchtoolbar.setNavigationOnClickListener { finish() }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -129,7 +129,7 @@ class SearchActivity : AppCompatActivity(), ContactService.IOnSearchContactListe
 
         if (searchKey!!.isEmpty()) {
             ToastUtil.showToast(this, "请输入您想查询的人员信息", Toast.LENGTH_SHORT)
-            txtTips!!.visibility = TextView.VISIBLE
+            txtTips.visibility = TextView.VISIBLE
             return
         }
 
@@ -142,7 +142,7 @@ class SearchActivity : AppCompatActivity(), ContactService.IOnSearchContactListe
 
         httpDialog = ProgressUtil().showHttpLoading(this)
 
-        txtTips!!.visibility = TextView.GONE
+        txtTips.visibility = TextView.GONE
 
         mList = CacheInfoUtil.loadContact(this)
 
@@ -158,17 +158,15 @@ class SearchActivity : AppCompatActivity(), ContactService.IOnSearchContactListe
     }
 
     private fun clearLoading() {
-        if (null != refresh) {
-            refresh!!.finishRefresh()
-            refresh!!.finishRefreshLoadMore()
-        }
+        refresh.finishRefresh()
+        refresh.finishRefreshLoadMore()
         if (httpDialog != null && httpDialog!!.isShowing) {
             httpDialog!!.dismiss()
         }
     }
 
     override fun onSearchSuccess(list: ArrayList<LoginInfo>) {
-        if (null != list && list.size > 0) {
+        if (list.size > 0) {
             startFindLikeData(list)
         } else {
             clearLoading()
@@ -199,12 +197,12 @@ class SearchActivity : AppCompatActivity(), ContactService.IOnSearchContactListe
     }
 
     private fun initAdapt(list: List<LoginInfo>?) {
-        if (null != list && list.size > 0) {
+        if (null != list && list.isNotEmpty()) {
             mAdapt = ContactAdapt(this, list, imageLoader!!)
             val animAdapter = ScaleInAnimationAdapter(mAdapt)
             animAdapter.absListView = listView
             animAdapter.setInitialDelayMillis(300)
-            listView!!.adapter = animAdapter
+            listView.adapter = animAdapter
         } else {
             ToastUtil.showToast(this, "没有搜索到匹配的人员信息", Toast.LENGTH_SHORT)
         }

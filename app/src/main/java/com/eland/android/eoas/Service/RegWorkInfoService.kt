@@ -213,6 +213,15 @@ class RegWorkInfoService : Service(), AMapLocationListener, ScheduleService.ISch
             get() = this@RegWorkInfoService
     }
 
+    fun stopService() {
+        if (null != scheduleService) {
+            scheduleService!!.cancel()
+        }
+        mLocationClient!!.stopLocation()
+        mLocationClient!!.onDestroy()
+        stopSelf()
+    }
+
     companion object {
         //声明AMapLocationClient类对象
         var mLocationClient: AMapLocationClient? = null
