@@ -12,6 +12,6 @@ import retrofit2.http.Query
  */
 
 interface WetherService {
-    @GET("/v1/forecast.json?key={apiKey}&q={q}&days={days}")
-    fun GetWether(@Query("apiKey") apiKey: String, @Query("q") q: String, @Query("days") days : Int) : Observable<WetherData>
+    @GET("/v1/forecast.json")
+    fun GetWether(@Query("key") apiKey: String, @Query("q") q: String, @Query("days") days : Int) : Observable<WetherData>
 }

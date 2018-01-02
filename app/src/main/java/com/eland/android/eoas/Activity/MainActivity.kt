@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity(), ProgressUtil.IOnMainUpdateListener {
     private var fragmentManager: FragmentManager? = null
     private var mainFragment: MainFragment? = null
     private var mActionBarDrawerToggle: ActionBarDrawerToggle? = null
-    private var mDrawerLayout: DrawerLayout? = null
+    private lateinit var mDrawerLayout: DrawerLayout
     private var drawerStatus: Boolean = false
 
     private var updateManagerListener: UpdateManagerListener? = null
@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity(), ProgressUtil.IOnMainUpdateListener {
 
         setContentView(R.layout.activity_main)
         fragmentManager = supportFragmentManager
-        EOASApplication.instance.addActivity(this)
+        EOASApplication.instance!!.addActivity(this)
 
         context = this
 
@@ -78,16 +78,16 @@ class MainActivity : AppCompatActivity(), ProgressUtil.IOnMainUpdateListener {
     }
 
     private fun initDrawer() {
-        mDrawerLayout = findViewById(R.id.content_drawer) as DrawerLayout?
+        mDrawerLayout = findViewById(R.id.content_drawer)
 
-        mDrawerLayout!!.setDrawerShadow(R.drawable.drawer_shadow,
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
                 GravityCompat.START)
         supportFragmentManager
                 .beginTransaction()
                 .replace(R.id.left_drawer,
                         DrawerFragment(this@MainActivity)).commit()
 
-        val toolbar = findViewById(R.id.toolbar) as Toolbar?
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar!!.setTitleTextColor(Color.parseColor("#ffffff")) //设置标题颜色
         setSupportActionBar(toolbar)
         supportActionBar!!.setHomeButtonEnabled(true) //设置返回键可用
@@ -108,7 +108,7 @@ class MainActivity : AppCompatActivity(), ProgressUtil.IOnMainUpdateListener {
         }
 
         mActionBarDrawerToggle!!.syncState()
-        mDrawerLayout!!.setDrawerListener(mActionBarDrawerToggle)
+        mDrawerLayout!!.addDrawerListener(mActionBarDrawerToggle!!)
         setmDrawerLayout(mDrawerLayout!!)
     }
 
@@ -219,7 +219,7 @@ class MainActivity : AppCompatActivity(), ProgressUtil.IOnMainUpdateListener {
             }, 2000) // 如果2秒钟内没有按下返回键，则启动定时器取消掉刚才执行的任务
 
         } else {
-            EOASApplication.instance.existApp()
+            EOASApplication.instance!!.existApp()
             finish()
         }
     }

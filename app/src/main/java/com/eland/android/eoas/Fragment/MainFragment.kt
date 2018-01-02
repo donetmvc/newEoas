@@ -3,11 +3,9 @@ package com.eland.android.eoas.Fragment
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import android.view.LayoutInflater
 import android.view.View
@@ -15,24 +13,20 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 
 import com.amap.api.location.AMapLocation
 import com.amap.api.location.AMapLocationClient
 import com.amap.api.location.AMapLocationClientOption
 import com.amap.api.location.AMapLocationListener
-import com.eland.android.eoas.Activity.MainActivity
 import com.eland.android.eoas.Model.ApproveListInfo
 import com.eland.android.eoas.Model.Constant
 import com.eland.android.eoas.Model.WetherInfo
 import com.eland.android.eoas.R
 import com.eland.android.eoas.Receiver.DeskCountChangeReceiver
 import com.eland.android.eoas.Service.ApproveListService
-import com.eland.android.eoas.Service.WetherService
 import com.eland.android.eoas.Util.ConsoleUtil
 import com.eland.android.eoas.Util.ImageLoaderOption
 import com.eland.android.eoas.Util.SharedReferenceHelper
-import com.eland.android.eoas.Util.ToastUtil
 import com.eland.android.eoas.Views.ScrollTextView
 import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -44,11 +38,22 @@ import java.util.TimeZone
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.eland.android.eoas.Activity.BaseActivity
+import com.eland.android.eoas.Http.IService.IOnGetWetherListener
+import com.eland.android.eoas.Http.IService.Wether
+import com.eland.android.eoas.Http.IService.WetherService
+import com.eland.android.eoas.Model.WetherData
+import permissions.dispatcher.NeedsPermission
+import permissions.dispatcher.PermissionUtils
+import permissions.dispatcher.RuntimePermissions
 
 /**
  * Created by liu.wenbin on 15/11/27.
  */
-class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLocationListener, WetherService.IOnGetWetherListener {
+@RuntimePermissions
+class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLocationListener, IOnGetWetherListener {
+
+
 
     @BindView(R.id.img_registSchedule)
     lateinit var imgRegistSchedule: LinearLayout
@@ -71,7 +76,6 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
     private val TAG = "EOAS"
     private var mUserId: String? = null
     private var approveListService: ApproveListService? = null
-    private var wetherService: WetherService? = null
 
     private var options: DisplayImageOptions? = null
     private var imageLoader: ImageLoader? = null
@@ -99,7 +103,6 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
         ButterKnife.bind(this, rootView!!)
 
         approveListService = ApproveListService(context)
-        wetherService = WetherService(context)
 
         options = ImageLoaderOption.getOptionsById(R.mipmap.default_wether)
         imageLoader = ImageLoader.getInstance()
@@ -117,7 +120,7 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
     }
 
     private fun setTitler() {
-        txtMainScroll.textContent = "用户ID: " + mUserId + "   欢迎使用移动OA办公系统!" + "  今天是   " + StringData()
+        txtMainScroll.textContent = "用户ID: " + mUserId + "   欢迎使用移动OA办公系统!" + "  今天是   " + formatWeekDay()
         txtMainScroll.textSize = 22
         txtMainScroll.textColor = context!!.resources.getColor(R.color.text_color)
         txtMainScroll.backgroundColor = Color.WHITE
@@ -125,7 +128,29 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
     }
 
     private fun setWehter() {
-        getLocation()
+        if(!PermissionUtils.hasSelfPermissions(context,
+                BaseActivity.READ_EXTERNAL_STORAGE_PERMISSION,
+                BaseActivity.WRITE_EXTERNAL_STORAGE_PERMISSION,
+                BaseActivity.READ_PHONE_STATE_PERMISSION,
+                BaseActivity.CAMERA_PERMISSION,
+                BaseActivity.ACCESS_FINE_LOCATION_PEMISSION,
+                BaseActivity.ACCESS_CROSE_LOCATION_PERMISSION)) {
+            showLocationWithPermissionCheck()
+        }
+    }
+
+    @SuppressLint("NeedOnRequestPermissionsResult")
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        // NOTE: delegate the permission handling to generated method
+        onRequestPermissionsResult(requestCode, grantResults)
+
+        if(grantResults.all { it -> it == 0 }) {
+            getLocation()
+        }
+        else {
+            getWetherData("BeiJing")
+        }
     }
 
     private fun getLocation() {
@@ -133,41 +158,32 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
     }
 
     private fun initMap() {
-        mLocationClient = AMapLocationClient(getContext())
+        mLocationClient = AMapLocationClient(context)
         mLocationClient!!.setLocationListener(this)
         initOption()
         mLocationClient!!.setLocationOption(mLocationOption)
-
+        mLocationClient!!.stopLocation()
         mLocationClient!!.startLocation()
     }
 
     override fun onLocationChanged(amapLocation: AMapLocation?) {
         if (amapLocation != null) {
-            if (count == 5) {
-                mLocationClient!!.stopLocation()
-                getWetherData()
-            } else {
-                if (amapLocation.errorCode == 0) {
-                    latitude = amapLocation.latitude//获取纬度
-                    longitude = amapLocation.longitude//获取经度
-                    count++
-                }
-            }
+            latitude = amapLocation.latitude//获取纬度
+            longitude = amapLocation.longitude//获取经度
+            getWetherData("${latitude}&${longitude}")
         }
     }
 
-    private fun getWetherData() {
-        if (null != wetherService) {
-
-        } else {
-            wetherService = WetherService(context)
-        }
-
-        wetherService!!.getWether(longitude.toString(), latitude.toString(), this)
+    private fun getWetherData(location: String) {
+        mLocationClient?.stopLocation()
+        mLocationClient?.onDestroy()
+        Wether().GetWetherList("d8d9cfec6b3f483eae480728172812", location, "5", this)
     }
 
     private fun initOption() {
         mLocationOption = AMapLocationClientOption()
+        mLocationOption!!.locationPurpose = AMapLocationClientOption.AMapLocationPurpose.SignIn
+        mLocationOption!!.isOnceLocationLatest = true
         //设置定位模式为高精度模式，Battery_Saving为低功耗模式，Device_Sensors是仅设备模式
         mLocationOption!!.locationMode = AMapLocationClientOption.AMapLocationMode.Hight_Accuracy
         //设置是否返回地址信息（默认返回地址信息）
@@ -175,11 +191,21 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
         //设置是否只定位一次,默认为false
         mLocationOption!!.isOnceLocation = false
         //设置是否强制刷新WIFI，默认为强制刷新
-        mLocationOption!!.isWifiActiveScan = true
+        mLocationOption!!.isWifiScan = true
         //设置是否允许模拟位置,默认为false，不允许模拟位置
         mLocationOption!!.isMockEnable = false
         //设置定位间隔,单位毫秒,默认为2000ms
         mLocationOption!!.interval = 2000
+    }
+
+    @NeedsPermission(BaseActivity.READ_EXTERNAL_STORAGE_PERMISSION,
+            BaseActivity.WRITE_EXTERNAL_STORAGE_PERMISSION,
+            BaseActivity.READ_PHONE_STATE_PERMISSION,
+            BaseActivity.CAMERA_PERMISSION,
+            BaseActivity.ACCESS_FINE_LOCATION_PEMISSION,
+            BaseActivity.ACCESS_CROSE_LOCATION_PERMISSION)
+    fun showLocation() {
+
     }
 
     override fun onStart() {
@@ -293,7 +319,7 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
     }
 
 
-    fun StringData(): String {
+    private fun formatWeekDay(): String {
 
         val mYear: String
         val mMonth: String
@@ -307,16 +333,20 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
         mDay = c.get(Calendar.DAY_OF_MONTH).toString()// 获取当前月份的日期号码
         mWay = c.get(Calendar.DAY_OF_WEEK).toString()
 
-        when(mWay) {
-            "1" -> mWay = "天"
-            "2" -> mWay = "一"
-            "3" -> mWay = "二"
-            "4" -> mWay = "三"
-            "5" -> mWay = "四"
-            "6" -> mWay = "五"
-            "7" -> mWay = "六"
+        val yearMothDay = "${mYear}年${mMonth}月${mDay}日"
+
+        return when(mWay) {
+            "1" -> "$yearMothDay   星期天"
+            "2" -> "$yearMothDay   星期一"
+            "3" -> "$yearMothDay   星期二"
+            "4" -> "$yearMothDay   星期三"
+            "5" -> "$yearMothDay   星期四"
+            "6" -> "$yearMothDay   星期五"
+            "7" -> "$yearMothDay   星期六"
+            else -> {
+                "$yearMothDay   星期天"
+            }
         }
-        return mYear + "年" + mMonth + "月" + mDay + "日" + "   星期" + mWay
     }
 
     override fun onDestroyView() {
@@ -339,18 +369,13 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
 
     }
 
-    override fun onGetSucess(info: WetherInfo) {
-        temperature.text = info.temperature
-        weather.text = info.weather
-        hightLow.text = info.hightTemp + "℃/" + info.lowTemp + "℃"
-        windAndSD.text = info.wind_direction + "  " + info.wind_power + "  湿度  " + info.sd
-        imageLoader!!.displayImage(info.weather_pic, imgWetherIcon!!, options)
+    override fun onGetWetherSuccess(result: Any) {
+        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        print(result)
     }
 
-    override fun onGetFailure(code: Int, message: String) {
-        if (null != wetherService) {
-            wetherService!!.cancelRequest()
-        }
+    override fun onGetWetherFailure() {
+        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     companion object {

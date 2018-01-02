@@ -13,6 +13,11 @@ android {
         targetSdkVersion 26
         versionCode 9
         versionName "1.0.9"
+
+        ndk {
+            //设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）
+            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "x86","arm64-v8a","x86_64"
+        }
     }
     buildTypes {
         release {
@@ -47,8 +52,6 @@ dependencies {
     implementation 'com.github.rey5137:material:1.2.2'
     implementation 'com.victor:lib:1.0.1'
     implementation 'me.drakeet.materialdialog:library:1.2.2'
-    implementation files('libs/AMap_Location_V3.3.0_20170118.jar')
-    implementation files('libs/Android_Map3D_SDK_V4.1.2_20161104.jar')
     implementation files('libs/universal-image-loader-1.9.5.jar')
     implementation files('libs/listviewanimations-2.6.0.jar')
     implementation files('libs/nineoldandroids-2.4.0.jar')
@@ -65,15 +68,17 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     implementation 'com.squareup.retrofit2:converter-scalars:2.3.0'
-    implementation("com.github.hotchemi:permissionsdispatcher:3.0.1")
-//            {
-//        // if you don't use android.app.Fragment you can exclude support for them
-//        exclude module: "support-v13"
-//    }
+    implementation("com.github.hotchemi:permissionsdispatcher:3.0.1"){
+        // if you don't use android.app.Fragment you can exclude support for them
+        exclude module: "support-v13"
+    }
     kapt "com.github.hotchemi:permissionsdispatcher-processor:3.0.1"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation 'com.jakewharton:butterknife:8.8.1'
     kapt 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    implementation 'com.amap.api:3dmap:latest.integration'
+    implementation 'com.amap.api:location:latest.integration'
 }
 repositories {
     jcenter()

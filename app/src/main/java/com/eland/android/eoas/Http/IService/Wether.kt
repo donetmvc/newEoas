@@ -4,7 +4,6 @@ import com.eland.android.eoas.Http.HttpManager
 import com.eland.android.eoas.Model.WetherData
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import com.eland.android.eoas.Service.WetherService.*
 
 /**
  * Created by liuwenbin on 2017/12/28.
@@ -18,13 +17,18 @@ class Wether {
         observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ result: WetherData ->
-                    listener.onGetSucess(result)
+                    listener.onGetWetherSuccess(result)
                 }, {
-                    listener.onGetFailure(9999, "")
+                    listener.onGetWetherFailure()
                 })
     }
 
     companion object {
         val wetherService: WetherService = HttpManager.retrofit.create(WetherService::class.java)
     }
+}
+
+open interface IOnGetWetherListener {
+    fun onGetWetherSuccess(result: Any)
+    fun onGetWetherFailure()
 }

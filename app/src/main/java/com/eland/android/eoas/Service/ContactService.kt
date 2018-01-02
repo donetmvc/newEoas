@@ -62,7 +62,7 @@ class ContactService(private val context: Context) {
                             dto.email = userIds + "@eland.co.kr"
                             dto.backCellNo = backCellNo
                             dto.backName = backName
-                            dto.url = EOASApplication.instance.photoUri + userIds.replace(".", "") + ".jpg"
+                            dto.url = EOASApplication.instance!!.photoUri + userIds.replace(".", "") + ".jpg"
 
 
                             //list中已存在的人员不再添加

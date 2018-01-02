@@ -2,6 +2,7 @@ package com.eland.android.eoas.Application
 
 import android.app.Activity
 import android.app.Application
+import android.content.Context
 import android.content.Intent
 
 import com.eland.android.eoas.Model.Constant
@@ -26,36 +27,31 @@ class EOASApplication : Application() {
     //    public String photoUri = "http://10.202.101.11:30002/Eland.EOAS/Images/";
     var apiUri: String? = null
 
+    init {
+        instance = this
+    }
+
     override fun onCreate() {
         super.onCreate()
 
+        //val context: Context = EOASApplication.applicationContext()
+
         //蒲公英捕捉crash
-        PgyCrashManager.register(this)
+        //PgyCrashManager.register(this)
 
         //初始化JPush 正式发布是，需要把注释打开
-        JPushInterface.setDebugMode(false)
+        //JPushInterface.setDebugMode(false)
+        //JPushInterface.init(this)
+
+        JPushInterface.stopPush(this)
+    }
+
+    fun registerPgy() {
+        PgyCrashManager.register(this)
+    }
+
+    fun initJPush() {
         JPushInterface.init(this)
-
-//        JPushInterface.stopPush(this)
-
-        //initApplicantion()
-    }
-
-    private fun initApplicantion() {
-        //check is push id regist success or failure?
-        //the first time launcher app it does't work
-        val isOk = SharedReferenceHelper.getInstance(this).getValue(Constant.EOAS_PUSHID)//"FAILURE");
-        if (isOk == "FAILURE") {
-            val pushId = JPushInterface.getRegistrationID(this)
-            //retry to regist push id
-            startRegistPushId(pushId)
-        }
-    }
-
-    private fun startRegistPushId(pushId: String) {
-        val intents = Intent(this, RegistAutoService::class.java)
-        intents.putExtra("PUSHID", pushId)
-        startService(intents)
     }
 
     fun addActivity(ac: Activity) {
@@ -68,14 +64,10 @@ class EOASApplication : Application() {
     }
 
     companion object {
-        var mInstance: EOASApplication? = null
+        var instance: EOASApplication? = null
 
-        val instance: EOASApplication
-            @Synchronized get() {
-                if (mInstance == null) {
-                    mInstance = EOASApplication()
-                }
-                return mInstance!!
-            }
+        fun applicationContext() : Context {
+            return instance!!.applicationContext
+        }
     }
 }

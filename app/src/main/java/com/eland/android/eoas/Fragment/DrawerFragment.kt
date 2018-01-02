@@ -215,7 +215,7 @@ class DrawerFragment : Fragment, ChooseImageUtil.IOnCarmerListener, ChooseImageU
         //设置用户名
         if (!loginId!!.isEmpty()) {
             fileName = loginId!!.replace(".", "")
-            imgUri = EOASApplication.instance.photoUri + fileName + ".jpg"
+            imgUri = EOASApplication.instance!!.photoUri + fileName + ".jpg"
         } else {
             txtName!!.text = "无名氏"
             fileName = "sysadmin"

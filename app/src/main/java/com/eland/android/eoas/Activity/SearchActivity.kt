@@ -76,7 +76,7 @@ class SearchActivity : AppCompatActivity(), ContactService.IOnSearchContactListe
         }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        EOASApplication.instance.addActivity(this)
+        EOASApplication.instance!!.addActivity(this)
         ButterKnife.bind(this)
 
         contactService = ContactService(this)
