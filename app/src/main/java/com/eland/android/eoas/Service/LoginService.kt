@@ -18,7 +18,7 @@ import cz.msebera.android.httpclient.Header
 class LoginService(private val context: Context) {
     var isignInListener: ISignInListener? = null
 
-    fun signIn(loginId: String, password: String, username: String, imei: String) {
+    fun signIn(loginId: String, password: String, username: String?, imei: String?) {
         val uri = "api/NewLogin"
 
         val params = RequestParams()

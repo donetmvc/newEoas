@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.telephony.TelephonyManager
+import com.eland.android.eoas.DeviceInfoFactory.GetDeviceInfo
 
 import com.eland.android.eoas.Model.Constant
 import com.eland.android.eoas.Util.SharedReferenceHelper
@@ -15,7 +16,7 @@ import com.eland.android.eoas.Util.SharedReferenceHelper
 class RegistAutoService : Service(), RegistPushIDService.IOnRegistListener {
 
     private var pushId: String? = null
-    private var imei = ""
+    private var imei: String? = ""
     private var telephonyManager: TelephonyManager? = null
 
     override fun onCreate() {
@@ -27,9 +28,9 @@ class RegistAutoService : Service(), RegistPushIDService.IOnRegistListener {
         if (null != intent) {
             pushId = intent.getStringExtra("PUSHID")
         }
-        imei = telephonyManager!!.deviceId
+        imei = GetDeviceInfo(applicationContext).getDeviceId()
 
-        if (!pushId!!.isEmpty() && !imei.isEmpty()) {
+        if (pushId?.isNotEmpty()!! && imei?.isNotEmpty()!!) {
             startRegistService()
         }
 
@@ -38,7 +39,7 @@ class RegistAutoService : Service(), RegistPushIDService.IOnRegistListener {
 
     private fun startRegistService() {
         val registPushIDService = RegistPushIDService()
-        registPushIDService.registPush(pushId!!, imei, this)
+        registPushIDService.registPush(pushId!!, imei!!, this)
     }
 
     override fun onDestroy() {

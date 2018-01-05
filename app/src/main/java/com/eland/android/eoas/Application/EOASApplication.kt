@@ -3,24 +3,28 @@ package com.eland.android.eoas.Application
 import android.app.Activity
 import android.app.Application
 import android.content.Context
-import android.content.Intent
 
-import com.eland.android.eoas.Model.Constant
-import com.eland.android.eoas.Service.RegistAutoService
 import com.eland.android.eoas.Util.ActivityManager
-import com.eland.android.eoas.Util.SharedReferenceHelper
-import com.eland.android.eoas.Util.SystemMethodUtil
 import com.pgyersdk.crash.PgyCrashManager
 
 import cn.jpush.android.api.JPushInterface
-import me.leolin.shortcutbadger.ShortcutBadger
+import com.eland.android.eoas.BuildConfig
+import com.eland.android.eoas.Jobs.DemoJobCreator
+import com.eland.android.eoas.Jobs.MyLogger
+import com.evernote.android.job.JobConfig
+import com.evernote.android.job.JobManager
+import com.orhanobut.logger.AndroidLogAdapter
+import com.orhanobut.logger.DiskLogAdapter
+import com.orhanobut.logger.Logger
+import dagger.android.AndroidInjector
+import dagger.android.DaggerApplication
+import timber.log.Timber
 
 
 /**
  * Created by liu.wenbin on 15/11/10.
  */
-class EOASApplication : Application() {
-
+class EOASApplication : DaggerApplication() {
     var TAG = "EOAS"
     var photoUri = "http://182.92.65.253:30001/Eland.EOAS/Images/"
 
@@ -29,6 +33,12 @@ class EOASApplication : Application() {
 
     init {
         instance = this
+    }
+
+    override fun applicationInjector(): AndroidInjector<out EOASApplication> {
+        return AndroidInjector<EOASApplication>{
+
+        } //DaggerAppComponent.builder().create(this);
     }
 
     override fun onCreate() {
@@ -44,6 +54,25 @@ class EOASApplication : Application() {
         //JPushInterface.init(this)
 
         JPushInterface.stopPush(this)
+        JobConfig.addLogger(MyLogger())
+        JobManager.create(this).addJobCreator(DemoJobCreator())
+
+        //debug
+        Logger.addLogAdapter(object : AndroidLogAdapter() {
+            override fun isLoggable(priority: Int, tag: String?): Boolean {
+                return BuildConfig.DEBUG
+            }
+        })
+
+        //release
+        Logger.addLogAdapter(DiskLogAdapter())
+
+        // Set methodOffset to 5 in order to hide internal method calls
+        Timber.plant(object : Timber.DebugTree() {
+            override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+                Logger.log(priority, tag, message, t)
+            }
+        })
     }
 
     fun registerPgy() {

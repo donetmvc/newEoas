@@ -7,6 +7,8 @@ import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,6 +41,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.eland.android.eoas.Activity.BaseActivity
+import com.eland.android.eoas.Adapt.WetherAdapter
 import com.eland.android.eoas.Http.IService.IOnGetWetherListener
 import com.eland.android.eoas.Http.IService.Wether
 import com.eland.android.eoas.Http.IService.WetherService
@@ -59,16 +62,8 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
     lateinit var imgRegistSchedule: LinearLayout
     @BindView(R.id.txt_main_scroll)
     lateinit var txtMainScroll: ScrollTextView
-    @BindView(R.id.img_wether_icon)
-    lateinit var imgWetherIcon: ImageView
-    @BindView(R.id.temperature)
-    lateinit var temperature: TextView
-    @BindView(R.id.weather)
-    lateinit var weather: TextView
-    @BindView(R.id.hight_low)
-    lateinit var hightLow: TextView
-    @BindView(R.id.windAndSD)
-    lateinit var windAndSD: TextView
+    @BindView(R.id.wether_recycl)
+    lateinit var recycl: RecyclerView
 
     private var rootView: View? = null
     private var registScheduleFragment: RegistScheduleFragment? = null
@@ -372,6 +367,9 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
     override fun onGetWetherSuccess(result: Any) {
         //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         print(result)
+
+        recycl.layoutManager = LinearLayoutManager(context).apply { orientation = LinearLayoutManager.HORIZONTAL }
+        recycl.adapter = WetherAdapter((result as WetherData).forecast.forecastday)
     }
 
     override fun onGetWetherFailure() {

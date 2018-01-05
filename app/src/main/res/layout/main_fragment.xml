@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/md_white_1000"
     android:orientation="vertical">
 
@@ -18,104 +19,13 @@
                 android:id="@+id/txt_main_scroll"
                 android:layout_width="match_parent"
                 android:layout_height="25dp" />
-
         </LinearLayout>
-
-        <LinearLayout
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/wether_recycl"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0.5"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="0.8"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.3">
-
-                        <TextView
-                            android:id="@+id/temperature"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="right"
-                            android:text="0"
-                            android:textSize="35dp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.1">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="center_horizontal"
-                            android:text="o"
-                            android:textSize="16dp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.3"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/weather"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="0.5"
-                            android:text="晴"
-                            android:gravity="center_vertical" />
-
-                        <TextView
-                            android:id="@+id/hight_low"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="0.5"
-                            android:text="4℃/-4℃"
-                            android:gravity="top|center_vertical" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.2">
-
-                    <TextView
-                        android:id="@+id/windAndSD"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="北风  4级  湿度 32" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0.5"
-                android:gravity="center">
-                <ImageView
-                    android:id="@+id/img_wether_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    />
-            </LinearLayout>
-        </LinearLayout>
-
+        </android.support.v7.widget.RecyclerView>
     </LinearLayout>
 
     <LinearLayout

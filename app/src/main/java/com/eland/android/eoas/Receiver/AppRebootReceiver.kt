@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.telephony.TelephonyManager
+import com.eland.android.eoas.DeviceInfoFactory.GetDeviceInfo
 
 import com.eland.android.eoas.Util.CacheInfoUtil
 import com.eland.android.eoas.Util.ConsoleUtil
@@ -25,7 +26,7 @@ class AppRebootReceiver : BroadcastReceiver() {
 
         action = intent.action
         telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-        imei = telephonyManager!!.deviceId
+        imei = GetDeviceInfo(context).getDeviceId()
 
         ConsoleUtil.i(TAG, "----------自启动:-------------" + imei!!)
 

@@ -121,7 +121,8 @@ class ApplyStateActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
             step.setLabels(approves)
                     .setBarColor(Color.GRAY)
                     .setLabelColor(Color.GRAY)
-                    .setColorIndicator(resources.getColor(R.color.md_red_500)).completedPosition = if (approvePosition == 0) 0 else approvePosition - 1
+                    .setColorIndicator(resources.getColor(R.color.md_red_500))
+                    .setCompletedPosition(if (approvePosition == 0) 0 else approvePosition - 1)
         }
 
         if (httpDialog!!.isShowing) {

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.loopeer.shadow.ShadowView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/shadow_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="12dp"
+    android:layout_marginEnd="8dp"
+    android:elevation="10dp"
+    android:foreground="?attr/selectableItemBackground"
+    android:padding="10dp"
+    app:cornerRadius="4dp"
+    app:shadowMargin="20dp"
+    app:shadowRadius="20dp">
+
+    <android.support.constraint.ConstraintLayout
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
+
+        <TextView
+            android:id="@+id/wether_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="2018-01-04"
+            android:textColor="@color/font_white"
+            card_view:layout_constraintBottom_toTopOf="@+id/wether_week"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintHorizontal_bias="0.5"
+            card_view:layout_constraintStart_toEndOf="@+id/wether_img"
+            card_view:layout_constraintTop_toTopOf="parent"
+            card_view:layout_constraintVertical_bias="0.120000005" />
+
+        <TextView
+            android:id="@+id/wether_week"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="星期三"
+            android:textColor="@color/font_white"
+            card_view:layout_constraintBottom_toTopOf="@+id/wether_tips"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintHorizontal_bias="0.5"
+            card_view:layout_constraintStart_toEndOf="@+id/wether_img"
+            card_view:layout_constraintTop_toBottomOf="@+id/wether_date"
+            card_view:layout_constraintVertical_bias="0.52" />
+
+        <TextView
+            android:id="@+id/wether_tips"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="今日天气不错"
+            android:textColor="@color/font_white"
+            card_view:layout_constraintBottom_toTopOf="@+id/lbl_wind"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintHorizontal_bias="0.5"
+            card_view:layout_constraintStart_toEndOf="@+id/wether_img"
+            card_view:layout_constraintTop_toBottomOf="@+id/wether_week"
+            card_view:layout_constraintVertical_bias="0.92" />
+
+        <ImageView
+            android:id="@+id/wether_img"
+            android:layout_width="113dp"
+            android:layout_height="129dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:srcCompat="@mipmap/default_wether"
+            card_view:layout_constraintBottom_toTopOf="@+id/wether_temp"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintEnd_toStartOf="@+id/wether_week"
+            card_view:layout_constraintHorizontal_bias="0.5"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/lbl_temp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="32dp"
+            android:text="气温"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/wether_temp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:text="3/8度"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintStart_toEndOf="@+id/lbl_temp" />
+
+        <TextView
+            android:id="@+id/lbl_wind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="风向"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintEnd_toStartOf="@+id/wether_wind" />
+
+        <TextView
+            android:id="@+id/wether_wind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="32dp"
+            android:text="3/8级"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintEnd_toEndOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+</com.loopeer.shadow.ShadowView>
+

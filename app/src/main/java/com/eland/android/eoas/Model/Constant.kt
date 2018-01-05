@@ -25,4 +25,6 @@ object Constant {
     val LOGINRESPONE = "LOGINRESPONE"
     val EMPDI = "EMPID"
     val SHOPCODE = "SHOPCODE"
+
+    val DEVICEID = "DEVICEID"
 }

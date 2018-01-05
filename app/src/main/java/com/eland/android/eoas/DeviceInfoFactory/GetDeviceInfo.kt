@@ -12,25 +12,25 @@ import permissions.dispatcher.PermissionUtils
  * 虽然青春不在，但不能自我放逐.
  */
 class GetDeviceInfo {
-    private lateinit var contexts: Context
+    private var contexts: Context
 
     constructor(context: Context) {
         contexts = context
     }
 
-    fun getDeviceId(): String {
+    fun getDeviceId(): String? {
         if(!PermissionUtils.hasSelfPermissions(contexts,
                 BaseActivity.READ_EXTERNAL_STORAGE_PERMISSION)) {
             return ""
         }
 
-        val telephonyManager: TelephonyManager = contexts.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        val telephonyManager: TelephonyManager? = contexts.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
 
         return if(Build.VERSION.SDK_INT < 26) {
-            telephonyManager!!.deviceId
+            telephonyManager?.deviceId
         }
         else {
-            telephonyManager!!.imei
+            telephonyManager?.imei
         }
     }
 

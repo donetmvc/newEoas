@@ -13,6 +13,7 @@ import java.util.Timer
 import java.util.TimerTask
 
 import cn.jpush.android.api.JPushInterface
+import com.eland.android.eoas.Activity.Login.NewLoginActivity
 
 /**
  * Created by liu.wenbin on 15/11/10.
@@ -55,7 +56,7 @@ class LauncherActivity : AppCompatActivity() {
         var intent: Intent = if(isLogin == "TRUE") {
             Intent(this@LauncherActivity, MainActivity::class.java)
         } else {
-            Intent(this@LauncherActivity, LoginActivity::class.java)
+            Intent(this@LauncherActivity, NewLoginActivity::class.java)
         }
         startActivity(intent)
         finish()

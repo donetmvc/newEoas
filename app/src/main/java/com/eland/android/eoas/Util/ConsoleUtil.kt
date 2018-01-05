@@ -1,18 +1,19 @@
 package com.eland.android.eoas.Util
 
-import android.util.Log
+import com.eland.android.eoas.BuildConfig
+import timber.log.Timber
 
 /**
  * Created by liu.wenbin on 15/11/10.
  */
 object ConsoleUtil {
 
-    private val DEBUG = true
+    private val DEBUG = BuildConfig.DEBUG
 
     //verbose
     fun v(tag: String, msg: String) {
         if (DEBUG) {
-            Log.v(tag, msg)
+            Timber.v(msg)
         }
 
     }
@@ -20,7 +21,7 @@ object ConsoleUtil {
     //debug
     fun d(tag: String, msg: String) {
         if (DEBUG) {
-            Log.d(tag, msg)
+            Timber.d(msg)
         }
 
     }
@@ -28,7 +29,7 @@ object ConsoleUtil {
     //info
     fun i(tag: String, msg: String) {
         if (DEBUG) {
-            Log.i(tag, msg)
+            Timber.i(msg)
         }
 
     }
@@ -36,7 +37,7 @@ object ConsoleUtil {
     //warn
     fun w(tag: String, msg: String) {
         if (DEBUG) {
-            Log.w(tag, msg)
+            Timber.w(msg)
         }
 
     }

@@ -9,6 +9,7 @@ import com.eland.android.eoas.R
 import com.eland.android.eoas.Service.UpdatePhoneNmService
 import com.rey.material.widget.ProgressView
 import com.victor.loading.rotate.RotateLoading
+import com.wang.avi.AVLoadingIndicatorView
 
 import me.drakeet.materialdialog.MaterialDialog
 
@@ -17,7 +18,6 @@ import me.drakeet.materialdialog.MaterialDialog
  * 加载框
  */
 class ProgressUtil {
-
     fun setOnDialogConfirmListener(lister: IOnDialogConfirmListener) {
         iOnDialogConfirmListener = lister
     }
@@ -95,11 +95,35 @@ class ProgressUtil {
     companion object {
         private var progressView: ProgressView? = null
         private var rotateLoading: RotateLoading? = null
-        private val TAG = "EOAS"
 
         var iOnDialogConfirmListener: IOnDialogConfirmListener? = null
         var iOnMainUpdateListener: IOnMainUpdateListener? = null
+        private lateinit var dialog: Dialog //= Dialog(contexts, R.style.CustomDialog)
 
+        fun loading(context: Context, message: String? = null, title: String? = null, type: String? = null): Dialog {
+            val res: Int = if(type != null) {
+                when(type) {
+                    "progress" -> R.layout.avloading_view
+                    "loading" -> R.layout.http_loading
+                    else -> {
+                        R.layout.avloading_view
+                    }
+                }
+            }
+            else {
+                R.layout.avloading_view
+            }
+            val inflater = LayoutInflater.from(context)
+            val subView = inflater.inflate(res, null)
+            val avi = subView.findViewById(R.id.avi) as AVLoadingIndicatorView
+            avi.smoothToShow()
+            val dialog = Dialog(context, R.style.CustomDialog)
+            dialog.setContentView(avi)
 
+            dialog.setCanceledOnTouchOutside(false)
+            dialog.setCancelable(false)
+
+            return dialog
+        }
     }
 }

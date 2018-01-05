@@ -44,7 +44,7 @@
     <!--step view-->
     <declare-styleable name="StepsViewIndicator">
         <attr name="numOfSteps" format="integer" />
-        <attr name="indicatorColor" format="reference" />
+        <attr name="stepViewColor" format="reference" />
     </declare-styleable>
 
     <!--login theme-->

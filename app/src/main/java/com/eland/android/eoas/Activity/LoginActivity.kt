@@ -1,12 +1,9 @@
 package com.eland.android.eoas.Activity
 
-import android.Manifest
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
-import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.telephony.TelephonyManager
 import android.widget.Toast
 
@@ -20,7 +17,6 @@ import com.eland.android.eoas.Util.ProgressUtil
 import com.eland.android.eoas.Util.SharedReferenceHelper
 import com.eland.android.eoas.Util.ToastUtil
 import com.eland.android.eoas.Views.EditTextView
-import com.pgyersdk.javabean.AppBean
 import com.pgyersdk.update.PgyUpdateManager
 import com.pgyersdk.update.UpdateManagerListener
 import com.rey.material.widget.Button
@@ -31,7 +27,6 @@ import butterknife.OnClick
 import cn.jpush.android.api.JPushInterface
 import com.eland.android.eoas.DeviceInfoFactory.GetDeviceInfo
 import me.drakeet.materialdialog.MaterialDialog
-import permissions.dispatcher.PermissionUtils
 
 /**
  * Created by liu.wenbin on 15/11/10.
@@ -59,7 +54,9 @@ class LoginActivity : BaseActivity(), LoginService.ISignInListener, ProgressUtil
     private var dialogUtil: ProgressUtil? = null
     private var updateDialog: MaterialDialog? = null
     private var theme = ""
-    private var imei = ""
+    private var imei: String? = ""
+
+    private lateinit var loading: Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         theme = SharedReferenceHelper.getInstance(this).getValue(Constant.EOAS_THEME)
@@ -78,6 +75,8 @@ class LoginActivity : BaseActivity(), LoginService.ISignInListener, ProgressUtil
         context = this
         ButterKnife.bind(this)
 
+        loading = ProgressUtil.loading(this@LoginActivity)
+
         initActivity()
         initUpdate()
         initImei()
@@ -88,9 +87,10 @@ class LoginActivity : BaseActivity(), LoginService.ISignInListener, ProgressUtil
         val isGo = invalidateInput()
 
         if (isGo) {
-            progressDialog = ProgressUtil().showProgress(context)
+            //progressDialog = ProgressUtil().showProgress(context)
+            showLoading()
             ConsoleUtil.i(TAG, "--------imei value----=========$imei")
-            loginService!!.signIn(loginId!!, password, "", imei)
+            loginService.signIn(loginId, password, "", imei)
         }
     }
 
@@ -159,23 +159,25 @@ class LoginActivity : BaseActivity(), LoginService.ISignInListener, ProgressUtil
         return true
     }
 
+    private fun showLoading() {
+        if(loading.isShowing) loading.hide() else loading.show()
+    }
+
     override fun onBackPressed() {
         super.onBackPressed()
         return
     }
 
     override fun onSignInSuccess(info: LoginInfo) {
-        if (progressDialog!!.isShowing) {
-            progressDialog!!.dismiss()
-        }
-        SharedReferenceHelper.getInstance(context!!).setValue(Constant.LOGINID, loginId!!)
-        SharedReferenceHelper.getInstance(context!!).setValue(Constant.LOGIN_SUCCESS, "TRUE")
-        SharedReferenceHelper.getInstance(context!!).setValue(Constant.LOGINID_CELLNO, info.cellNo!!)
-        SharedReferenceHelper.getInstance(context!!).setValue(Constant.LOGINID_EMAIL, info.email!!)
-        SharedReferenceHelper.getInstance(context!!).setValue(Constant.LOGINID_USERNAME, info.userName!!)
+        showLoading()
+        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID, loginId)
+        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGIN_SUCCESS, "TRUE")
+        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_CELLNO, info.cellNo!!)
+        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_EMAIL, info.email!!)
+        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_USERNAME, info.userName!!)
 
         //登录系统后开启接收push,当然需要判断下用户是否设置了接收与否
-        if (CacheInfoUtil.loadIsReceive(this, loginId!!)!!) {
+        if (CacheInfoUtil.loadIsReceive(this, loginId)!!) {
             JPushInterface.resumePush(applicationContext)
         }
 
@@ -185,45 +187,38 @@ class LoginActivity : BaseActivity(), LoginService.ISignInListener, ProgressUtil
     }
 
     override fun onSignInFailure(code: Int, msg: String) {
-        var message = ""
-
-        if (code == 99999) {
-            message = "服务器异常"
+        showLoading()
+        val message = if (code == 99999) {
+            "服务器异常"
         } else {
-            message = msg
+            msg
         }
+        ToastUtil.showToast(context, message, Toast.LENGTH_LONG)
+        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID, "")
+        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGIN_SUCCESS, "")
+        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_CELLNO, "")
+        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_EMAIL, "")
+        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_USERNAME, "")
+    }
 
-        if (loginFailCount == 1) {
-            ToastUtil.showToast(context!!, message, Toast.LENGTH_LONG)
-            if (progressDialog!!.isShowing) {
-                progressDialog!!.dismiss()
-            }
-            SharedReferenceHelper.getInstance(context!!).setValue(Constant.LOGINID, "")
-            SharedReferenceHelper.getInstance(context!!).setValue(Constant.LOGIN_SUCCESS, "")
-            SharedReferenceHelper.getInstance(context!!).setValue(Constant.LOGINID_CELLNO, "")
-            SharedReferenceHelper.getInstance(context!!).setValue(Constant.LOGINID_EMAIL, "")
-            SharedReferenceHelper.getInstance(context!!).setValue(Constant.LOGINID_USERNAME, "")
-        } else {
-            loginFailCount++
-            ConsoleUtil.i(TAG, "--------try login again------------")
-            loginService!!.signIn(loginId!!, password, "", imei)
-        }
+    fun setLoginInfo(info: LoginInfo) {
+        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID, "")
+        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGIN_SUCCESS, "TRUE")
+        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_CELLNO, info.cellNo!!)
+        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_EMAIL, info.email!!)
+        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_USERNAME, info.userName!!)
     }
 
     override fun OnDialogConfirmListener() {
         updateDialog!!.dismiss()
-
-//        UpdateManagerListener.startDownloadTask()
-
         UpdateManagerListener.startDownloadTask(this@LoginActivity, downUri)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        loginService!!.cancel()
+        loginService.cancel()
     }
 
     companion object {
-
     }
 }

@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.telephony.TelephonyManager
+import com.eland.android.eoas.DeviceInfoFactory.GetDeviceInfo
 
 import com.eland.android.eoas.Service.CheckRegScheduleService
 import com.eland.android.eoas.Service.RegAutoService
@@ -59,13 +60,13 @@ class AutoReceiver : BroadcastReceiver(), CheckRegScheduleService.IOnCheckListen
     private fun init() {
         intents = Intent(context, RegAutoService::class.java)
         telephonyManager = context!!.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-        imei = telephonyManager!!.deviceId
+        imei = GetDeviceInfo(context!!).getDeviceId() //telephonyManager!!.deviceId
         val gregorianCalendar = GregorianCalendar()
-        val am_pm = gregorianCalendar.get(GregorianCalendar.AM_PM)
-        if (am_pm == 0) {
-            isAm = "AM"
+        val amPm = gregorianCalendar.get(GregorianCalendar.AM_PM)
+        isAm = if (amPm == 0) {
+            "AM"
         } else {
-            isAm = "PM"
+            "PM"
         }
     }
 

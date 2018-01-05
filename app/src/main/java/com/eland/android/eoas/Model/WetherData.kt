@@ -29,7 +29,7 @@ data class Location(
     val lon: Double,
     val tz_id: String,
     val localtime_epoch: Int,
-    val localtime: Date
+    val localtime: String
 )
 
 
@@ -59,13 +59,13 @@ data class Location(
 //"vis_miles": 4
 data class Current(
         val last_updated_epoch: Int,
-        val last_updated: Date,
-        val temp_c: Int,
+        val last_updated: String,
+        val temp_c: Double,
         val temp_f: Double,
         val is_day: Int,
         val condition: Condition,
-        val wind_mph: Int,
-        val wind_kph: Int,
+        val wind_mph: Double,
+        val wind_kph: Double,
         val wind_degree: Double,
         val wind_dir: String,
         val pressure_mb: Double,
@@ -74,7 +74,7 @@ data class Current(
         val precip_in: Double,
         val humidity: Int,
         val cloud: Int,
-        val feelslike_c: Int,
+        val feelslike_c: Double,
         val feelslike_f: Double,
         val vis_km: Int,
         val vis_miles: Int
@@ -91,7 +91,7 @@ data class ForeCast(
 )
 
 data class ForeCastDay(
-        val date: Date,
+        val date: String,
         val date_epoch: String,
         val day: Day,
         val astro: Astro
@@ -144,10 +144,10 @@ data class Day(
 //"moonrise": "01:22 PM",
 //"moonset": "01:34 AM"
 data class Astro(
-        val sunrise: Date,
-        val sunset: Date,
-        val moonrise: Date,
-        val moonset: Date
+        val sunrise: String,
+        val sunset: String,
+        val moonrise: String,
+        val moonset: String
 )
 
 

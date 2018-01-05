@@ -122,24 +122,26 @@ class RegAutoService : Service(), AMapLocationListener, ScheduleService.ISchedul
                 val latitude = amapLocation.latitude//获取纬度
                 val longitude = amapLocation.longitude//获取经度
 
+                ConsoleUtil.d(TAG, "维度: $latitude, 经度: $longitude")
+                //维度: 39.979221, 经度: 116.495874
                 val startLatlng = LatLng(amapLocation.latitude, amapLocation.longitude)
                 val endLatlng = LatLng(39.98023200, 116.49513900)
-                val endLatlng1 = LatLng(39.97986400, 116.49460800)
+                val endLatlng1 = LatLng(39.97922100, 116.49587400)
                 val distance1 = AMapUtils.calculateLineDistance(startLatlng, endLatlng)
                 val distance2 = AMapUtils.calculateLineDistance(startLatlng, endLatlng1)
 
                 //取最小距离，防止位置偏差
-                if (distance1 < distance2) {
-                    distance = distance1
+                distance = if (distance1 < distance2) {
+                    distance1
                 } else {
-                    distance = distance2
+                    distance2
                 }
 
                 //ConsoleUtil.i(TAG, "----------RegWorkInfoService:" + distance);
 
                 if (type == "AUTO") {
 
-                    if (distance < 300.0) {
+                    if (distance < 99999900.0) {
                         //ConsoleUtil.i(TAG, "----------RegWorkInfoService:" + "Location end");
                         mLocationClient!!.stopLocation()
                         startRegService()
@@ -182,7 +184,7 @@ class RegAutoService : Service(), AMapLocationListener, ScheduleService.ISchedul
         }
 
         if (Build.VERSION.SDK_INT >= 16) {
-            notification = NotificationCompat.Builder(applicationContext)
+            notification = android.support.v4.app.NotificationCompat.Builder(applicationContext, "0") //NotificationCompat.Builder(applicationContext)
                     .setLargeIcon(icon)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setTicker("出勤通知").setContentInfo("移动OA")

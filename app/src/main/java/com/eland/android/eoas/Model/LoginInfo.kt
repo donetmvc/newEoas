@@ -17,3 +17,16 @@ class LoginInfo : Serializable {
     var backCellNo: String? = null
     var backName: String? = null
 }
+
+
+data class UserInfoData(
+        val userId: String,
+        val password: String,
+        val userName: String,
+        val imei: String,
+        val email: String,
+        val cellNo: String,
+        val url: String,
+        val backCellNo: String,
+        val backName: String
+)

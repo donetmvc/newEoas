@@ -5,7 +5,6 @@ import android.app.Activity
 import android.app.AlarmManager
 import android.app.Dialog
 import android.app.PendingIntent
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
@@ -17,7 +16,6 @@ import android.os.Handler
 import android.os.Message
 import android.provider.MediaStore
 import android.support.v4.app.Fragment
-import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -56,7 +54,6 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.assist.ImageScaleType
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
-import com.pgyersdk.javabean.AppBean
 import com.pgyersdk.update.PgyUpdateManager
 import com.pgyersdk.update.UpdateManagerListener
 import com.rey.material.widget.Switch
@@ -70,6 +67,8 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import cn.jpush.android.api.JPushInterface
+import com.eland.android.eoas.DeviceInfoFactory.GetDeviceInfo
+import com.eland.android.eoas.Jobs.DemoSyncJob
 import me.drakeet.materialdialog.MaterialDialog
 
 
@@ -110,7 +109,7 @@ class DrawerFragment : Fragment, ChooseImageUtil.IOnCarmerListener, ChooseImageU
     private var aSwitch: Switch? = null
     private var bSwitch: Switch? = null
     private var loginId: String? = null
-    private var imei: String? = null
+    private var imei: String? = ""
     private var userName: String? = null
     private var cellNo: String? = null
     private var email: String? = null
@@ -255,8 +254,8 @@ class DrawerFragment : Fragment, ChooseImageUtil.IOnCarmerListener, ChooseImageU
 
         aSwitch!!.setOnCheckedChangeListener { view, checked ->
             ConsoleUtil.i(TAG, checked.toString())
-            val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-            imei = telephonyManager.deviceId
+//            val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+            imei = GetDeviceInfo(context).getDeviceId()
 
             val list = ArrayList<RegAutoInfo>()
             val reg = RegAutoInfo()
@@ -308,7 +307,10 @@ class DrawerFragment : Fragment, ChooseImageUtil.IOnCarmerListener, ChooseImageU
 
     private fun startRegAutoService() {
         //设置闹钟服务
-        alar!!.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), (10 * 1000).toLong(), pi)
+        //alar!!.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), (10 * 1000).toLong(), pi)
+
+        val jobId = DemoSyncJob.scheduleJob()
+//        print(jobId)
     }
 
     private fun stopRegAutoService() {
