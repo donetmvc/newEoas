@@ -11,6 +11,7 @@ import cn.jpush.android.api.JPushInterface
 import com.eland.android.eoas.BuildConfig
 import com.eland.android.eoas.Jobs.DemoJobCreator
 import com.eland.android.eoas.Jobs.MyLogger
+import com.eland.android.eoas.di.AppComponent
 import com.evernote.android.job.JobConfig
 import com.evernote.android.job.JobManager
 import com.orhanobut.logger.AndroidLogAdapter
@@ -35,10 +36,10 @@ class EOASApplication : DaggerApplication() {
         instance = this
     }
 
-    override fun applicationInjector(): AndroidInjector<out EOASApplication> {
-        return AndroidInjector<EOASApplication>{
-
-        } //DaggerAppComponent.builder().create(this);
+    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
+        var appComponent: AppComponent = DaggerAppComponent.builder().application(this).build()
+        appComponent.inject(this)
+        return  appComponent
     }
 
     override fun onCreate() {

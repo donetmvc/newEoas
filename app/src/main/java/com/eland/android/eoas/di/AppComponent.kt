@@ -16,7 +16,17 @@ import javax.inject.Singleton
  */
 @Singleton
 @Component(modules = [(AndroidSupportInjectionModule::class), (AppModule::class), (ActivityBuilder::class)])
-internal interface AppComponent : AndroidInjector<EOASApplication> {
+interface AppComponent : AndroidInjector<DaggerApplication> {
+
+    fun inject(app: EOASApplication)
+
+    override fun inject(instance: DaggerApplication?)
+
     @Component.Builder
-    abstract class Builder : AndroidInjector.Builder<EOASApplication>()
+    interface Builder {
+        @BindsInstance
+        fun application(application: Application): Builder
+
+        fun build(): AppComponent
+    }
 }
