@@ -216,6 +216,7 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
 
     override fun onPause() {
         super.onPause()
+        mLocationClient?.stopLocation()
         ConsoleUtil.i(TAG, "-------Fragment onPause---------------")
     }
 
@@ -347,6 +348,8 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
     override fun onDestroyView() {
         super.onDestroyView()
 //        ButterKnife.unbind(this)
+        mLocationClient?.stopLocation()
+        mLocationClient?.onDestroy()
     }
 
     override fun onDetach() {

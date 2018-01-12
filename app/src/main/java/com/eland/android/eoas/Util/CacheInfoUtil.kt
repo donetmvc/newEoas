@@ -30,16 +30,7 @@ object CacheInfoUtil {
     fun loadIsRegAuto(context: Context, userId: String): Boolean? {
         val list = DataCache<RegAutoInfo>().loadGlobal(context, Constant.EOAS_REGAUTO)
 
-        var isReg = false
-
-        for (i in list.indices) {
-            if ((list[i].userId == userId || list[i].imei == userId) && list[i].equals("TRUE")) {
-                isReg = true
-                break
-            }
-        }
-
-        return isReg
+        return list.indices.any { (list[it].userId == userId || list[it].imei == userId) && list[it].isRegAuto == "TRUE" }
     }
 
     //联系人缓存
@@ -60,16 +51,7 @@ object CacheInfoUtil {
     fun loadIsReceive(context: Context, userId: String): Boolean? {
         val list = DataCache<RegAutoInfo>().loadGlobal(context, Constant.EOAS_RECEIVE)
 
-        var isReg = false
-
-        for (i in list.indices) {
-            if (list[i].userId == userId && list[i].equals("TRUE")) {
-                isReg = true
-                break
-            }
-        }
-
-        return isReg
+        return list.indices.any { list[it].userId == userId && list[it].isReceive == "TRUE" }
     }
 
     internal class DataCache<T> {
@@ -86,16 +68,15 @@ object CacheInfoUtil {
             if (ctx == null) {
                 return
             }
-            val file: File
-            if (!folder.isEmpty()) {
+            val file = if (folder.isNotEmpty()) {
                 val fileDir = File(ctx.filesDir, folder)
                 ConsoleUtil.i(TAG, "----------创建缓存:-------------" + fileDir)
                 if (!fileDir.exists() || !fileDir.isDirectory) {
                     fileDir.mkdir()
                 }
-                file = File(fileDir, name)
+                File(fileDir, name)
             } else {
-                file = File(ctx.filesDir, name)
+                File(ctx.filesDir, name)
             }
             if (file.exists()) {
                 file.delete()
@@ -122,15 +103,14 @@ object CacheInfoUtil {
         private fun load(ctx: Context, name: String, folder: String): ArrayList<T> {
             var data: ArrayList<T>? = null
 
-            val file: File
-            if (!folder.isEmpty()) {
+            val file = if (!folder.isEmpty()) {
                 val fileDir = File(ctx.filesDir, folder)
                 if (!fileDir.exists() || !fileDir.isDirectory) {
                     fileDir.mkdir()
                 }
-                file = File(fileDir, name)
+                File(fileDir, name)
             } else {
-                file = File(ctx.filesDir, name)
+                File(ctx.filesDir, name)
             }
             if (file.exists()) {
                 try {

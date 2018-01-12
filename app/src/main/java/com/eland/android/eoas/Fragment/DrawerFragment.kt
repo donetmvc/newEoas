@@ -154,7 +154,8 @@ class DrawerFragment : Fragment, ChooseImageUtil.IOnCarmerListener, ChooseImageU
             .displayer(FadeInBitmapDisplayer(300))
             .build()
 
-    var handler: Handler = object : Handler() {
+    var handler = @SuppressLint("HandlerLeak")
+    object : Handler() {
 
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
@@ -168,6 +169,7 @@ class DrawerFragment : Fragment, ChooseImageUtil.IOnCarmerListener, ChooseImageU
             }
         }
     }
+
 
     constructor() : super() {}
 
