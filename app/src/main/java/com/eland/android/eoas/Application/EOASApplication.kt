@@ -2,7 +2,6 @@ package com.eland.android.eoas.Application
 
 import android.app.Activity
 import android.app.Application
-import android.content.Context
 
 import com.eland.android.eoas.Util.ActivityManager
 import com.pgyersdk.crash.PgyCrashManager
@@ -11,21 +10,18 @@ import cn.jpush.android.api.JPushInterface
 import com.eland.android.eoas.BuildConfig
 import com.eland.android.eoas.Jobs.DemoJobCreator
 import com.eland.android.eoas.Jobs.MyLogger
-import com.eland.android.eoas.di.AppComponent
 import com.evernote.android.job.JobConfig
 import com.evernote.android.job.JobManager
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.DiskLogAdapter
 import com.orhanobut.logger.Logger
-import dagger.android.AndroidInjector
-import dagger.android.DaggerApplication
 import timber.log.Timber
-
 
 /**
  * Created by liu.wenbin on 15/11/10.
  */
-class EOASApplication : DaggerApplication() {
+class EOASApplication : Application() {
+
     var TAG = "EOAS"
     var photoUri = "http://182.92.65.253:30001/Eland.EOAS/Images/"
 
@@ -34,12 +30,6 @@ class EOASApplication : DaggerApplication() {
 
     init {
         instance = this
-    }
-
-    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-        var appComponent: AppComponent = DaggerAppComponent.builder().application(this).build()
-        appComponent.inject(this)
-        return  appComponent
     }
 
     override fun onCreate() {
@@ -94,10 +84,8 @@ class EOASApplication : DaggerApplication() {
     }
 
     companion object {
-        var instance: EOASApplication? = null
+        lateinit var instance: EOASApplication
 
-        fun applicationContext() : Context {
-            return instance!!.applicationContext
-        }
+        fun applicationContext() = instance.applicationContext!!
     }
 }

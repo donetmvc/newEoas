@@ -37,9 +37,9 @@ open class BaseActivity : AppCompatActivity() {
         onRequestPermissionsResult(requestCode, grantResults)
 
         //if(grantResults.any { it -> it == -1 }) EOASApplication.instance.existApp()
-        if(grantResults.all { it === 0 }) {
-            EOASApplication.instance?.registerPgy()
-            EOASApplication.instance?.initJPush()
+        if(grantResults.all { it == 0 }) {
+            EOASApplication.instance.registerPgy()
+            EOASApplication.instance.initJPush()
         }
 
 //        if(permissions.isNotEmpty()) {
