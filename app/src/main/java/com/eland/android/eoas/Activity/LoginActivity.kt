@@ -160,7 +160,7 @@ class LoginActivity : BaseActivity(), LoginService.ISignInListener, ProgressUtil
     }
 
     private fun showLoading() {
-        if(loading.isShowing) loading.hide() else loading.show()
+        if(loading.isShowing) loading.dismiss() else loading.show()
     }
 
     override fun onBackPressed() {
@@ -170,11 +170,12 @@ class LoginActivity : BaseActivity(), LoginService.ISignInListener, ProgressUtil
 
     override fun onSignInSuccess(info: LoginInfo) {
         showLoading()
-        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID, loginId)
-        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGIN_SUCCESS, "TRUE")
-        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_CELLNO, info.cellNo!!)
-        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_EMAIL, info.email!!)
-        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_USERNAME, info.userName!!)
+        setLoginInfo(info, loginId, "TRUE")
+//        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID, loginId)
+//        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGIN_SUCCESS, "TRUE")
+//        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_CELLNO, info.cellNo!!)
+//        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_EMAIL, info.email!!)
+//        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_USERNAME, info.userName!!)
 
         //登录系统后开启接收push,当然需要判断下用户是否设置了接收与否
         if (CacheInfoUtil.loadIsReceive(this, loginId)!!) {
@@ -194,19 +195,20 @@ class LoginActivity : BaseActivity(), LoginService.ISignInListener, ProgressUtil
             msg
         }
         ToastUtil.showToast(context, message, Toast.LENGTH_LONG)
-        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID, "")
-        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGIN_SUCCESS, "")
-        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_CELLNO, "")
-        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_EMAIL, "")
-        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_USERNAME, "")
+        setLoginInfo(null)
+//        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID, "")
+//        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGIN_SUCCESS, "")
+//        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_CELLNO, "")
+//        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_EMAIL, "")
+//        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_USERNAME, "")
     }
 
-    fun setLoginInfo(info: LoginInfo) {
-        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID, "")
-        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGIN_SUCCESS, "TRUE")
-        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_CELLNO, info.cellNo!!)
-        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_EMAIL, info.email!!)
-        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_USERNAME, info.userName!!)
+    fun setLoginInfo(info: LoginInfo? = null, loginId: String = "", success: String = "") {
+        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID, loginId)
+        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGIN_SUCCESS, success)
+        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_CELLNO, info?.cellNo)
+        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_EMAIL, info?.email)
+        SharedReferenceHelper.getInstance(context).setValue(Constant.LOGINID_USERNAME, info?.userName)
     }
 
     override fun OnDialogConfirmListener() {
@@ -214,9 +216,13 @@ class LoginActivity : BaseActivity(), LoginService.ISignInListener, ProgressUtil
         UpdateManagerListener.startDownloadTask(this@LoginActivity, downUri)
     }
 
+    override fun onStop() {
+        super.onStop()
+        loginService.cancel()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        loginService.cancel()
     }
 
     companion object {

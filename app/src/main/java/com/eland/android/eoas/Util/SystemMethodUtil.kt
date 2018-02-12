@@ -56,15 +56,6 @@ object SystemMethodUtil {
     }
 
     fun isContains(list: ArrayList<LoginInfo>, userId: String): Boolean? {
-        var isContains = false
-
-        for (loginInfo in list) {
-            if (loginInfo.userId == userId) {
-                isContains = true
-                break
-            }
-        }
-
-        return isContains
+        return list.any { it.userId == userId }
     }
 }

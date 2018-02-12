@@ -317,8 +317,8 @@ class ApplyActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
     }
 
     @OnClick(R.id.btn_apply) internal fun apply() {
-        val isGo = validateInput()
-        if (isGo) {
+//        val isGo = validateInput()
+        if (validateInput()) {
             startApply()
         }
     }
@@ -348,7 +348,7 @@ class ApplyActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
             }
         }
 
-        if (editRemark!!.text.toString().isEmpty()) {
+        if (editRemark.text.toString().isEmpty()) {
             ToastUtil.showToast(this, "请填写休假理由", Toast.LENGTH_LONG)
             return false
         }

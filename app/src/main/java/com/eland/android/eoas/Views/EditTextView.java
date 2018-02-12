@@ -2,6 +2,7 @@ package com.eland.android.eoas.Views;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.v7.widget.AppCompatEditText;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -15,7 +16,7 @@ import android.widget.EditText;
 /**
  * Created by liu.wenbin on 15/11/10.
  */
-public class EditTextView extends EditText{
+public class EditTextView extends AppCompatEditText {
 
     private Drawable mRightDrawable;
     private boolean isHasFocus;
