@@ -441,6 +441,7 @@ class DrawerFragment : Fragment, ChooseImageUtil.IOnCarmerListener, ChooseImageU
                             e.printStackTrace()
                         }
 
+                        //TODO(此处有问题，有优化的余地)
                         imageLocalPath = FileUtil.saveToSdCard(bitmap!!, context, fileName)
                         ConsoleUtil.d(TAG, "------imageLocalPath--------" + imageLocalPath)
                         //imgPhoto.setBackgroundDrawable(new BitmapDrawable(bitmap));

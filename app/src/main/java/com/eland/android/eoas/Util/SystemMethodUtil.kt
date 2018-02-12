@@ -22,21 +22,20 @@ object SystemMethodUtil {
     val isInnerNetwork: Boolean
         get() {
             val p: Process
+            var status: Int = -1
             try {
                 p = Runtime.getRuntime().exec("ping -c 3 -w 100 " + "10.202.101.23")
-                val status = p.waitFor()
-                val input = p.inputStream
-                val readBuffer = BufferedReader(InputStreamReader(input))
-                val buffer = StringBuffer()
-                var line = readBuffer.readLine()
-                while (line != null) {
-                    buffer.append(line)
-                }
-                println("Return ============" + buffer.toString())
+
+                p.inputStream.use { input -> {
+                    status = p.waitFor()
+                    val line = BufferedReader(InputStreamReader(input)).readLine()
+                    while (line != null) {
+                        StringBuffer().append(line)
+                    }
+                } }
+
                 return status == 0
             } catch (e: IOException) {
-                e.printStackTrace()
-            } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
 
