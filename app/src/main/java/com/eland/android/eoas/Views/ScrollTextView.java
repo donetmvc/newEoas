@@ -99,9 +99,9 @@ public class ScrollTextView extends View {
         int specMode = MeasureSpec.getMode(measureSpec);
         int specSize = MeasureSpec.getSize(measureSpec);
         int result = 70;
-        if (specMode == MeasureSpec.AT_MOST) {//最大可获空间
+        if (specMode == MeasureSpec.AT_MOST) {//wrap_content
             result = specSize;
-        } else if (specMode == MeasureSpec.EXACTLY) {//精确尺寸
+        } else if (specMode == MeasureSpec.EXACTLY) {//match_parent
             result = specSize;
         }
         return result;

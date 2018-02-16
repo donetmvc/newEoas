@@ -16,8 +16,8 @@ class SharedReferenceHelper//实例化
     }
 
     //设置缓存值
-    fun setValue(key: String, value: String) {
-        sharedPreferences?.edit()?.putString(key, value)?.commit()
+    fun setValue(key: String, value: String?) {
+        sharedPreferences?.edit()?.putString(key, value)?.apply()
     }
 
     //获取缓存值
@@ -27,7 +27,7 @@ class SharedReferenceHelper//实例化
 
     //清理缓存的数据
     fun clear() {
-        sharedPreferences?.edit()?.clear()?.commit()
+        sharedPreferences?.edit()?.clear()?.apply()
     }
 
     companion object {

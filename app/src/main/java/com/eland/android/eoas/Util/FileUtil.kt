@@ -7,11 +7,11 @@ import android.graphics.BitmapFactory
 import android.os.Environment
 
 import java.io.File
-import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 
 import android.os.Environment.MEDIA_MOUNTED
+
 
 /**
  * Created by liu.wenbin on 15/12/7.
@@ -73,18 +73,30 @@ object FileUtil {
     fun saveToSdCard(bitmap: Bitmap, context: Context, fileName: String): String {
         val files = FileUtil.getCacheDirectory(context, true, fileName).toString() + ".jpg"
         val file = File(files)
+//        var out: FileOutputStream? = null
+//        try {
+//            out = FileOutputStream(file)
+//            if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)) {
+//                out.flush()
+//                out.close()
+//            }
+//        } catch (e: FileNotFoundException) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace()
+//        } catch (e: IOException) {
+//            // TODO Auto-generated catch block
+//            out?.close()
+//            e.printStackTrace()
+//        }
         try {
-            val out = FileOutputStream(file)
-            if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)) {
-                out.flush()
-                out.close()
-            }
-        } catch (e: FileNotFoundException) {
-            // TODO Auto-generated catch block
-            e.printStackTrace()
-        } catch (e: IOException) {
-            // TODO Auto-generated catch block
-            e.printStackTrace()
+            FileOutputStream(file).use { fos -> {
+                if(bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)) {
+                    fos.flush()
+                    fos.close()
+                }
+            }}
+        } catch (e: Exception) {
+            // TODO: handle exception
         }
 
         return file.absolutePath

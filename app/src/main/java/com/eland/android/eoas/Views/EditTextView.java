@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.CycleInterpolator;
 import android.view.animation.TranslateAnimation;
-import android.widget.EditText;
 
 /**
  * Created by liu.wenbin on 15/11/10.
@@ -18,7 +17,6 @@ import android.widget.EditText;
 public class EditTextView extends android.support.v7.widget.AppCompatEditText{
 
     private Drawable mRightDrawable;
-    private boolean isHasFocus;
 
     public EditTextView(Context context) {
         super(context);
@@ -104,7 +102,7 @@ public class EditTextView extends android.support.v7.widget.AppCompatEditText{
     private class FocusChangeListenerImpl implements OnFocusChangeListener {
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
-            isHasFocus = hasFocus;
+            boolean isHasFocus = hasFocus;
             if (isHasFocus) {
                 boolean isVisible = getText().toString().length() >= 1;
                 setClearDrawableVisible(isVisible);

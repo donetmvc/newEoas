@@ -20,7 +20,7 @@ class StepsView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
 
     private var mStepsViewIndicator: StepsViewIndicator? = null
     private var mLabelsLayout: FrameLayout? = null
-    private var mLabels: Array<String?>? = null
+    private var mLabels: ArrayList<String?>? = null
     private var mCompletedPosition: Int = 0
     private var mLabelColor = Color.BLACK
     private var mIndicatorColor = Color.RED
@@ -47,7 +47,7 @@ class StepsView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         mLabelsLayout = rootView.findViewById<View>(R.id.labels_container) as FrameLayout
     }
 
-    fun setLabels(labels: Array<String?>): StepsView {
+    fun setLabels(labels: ArrayList<String?>): StepsView {
         mLabels = labels
         mStepsViewIndicator!!.setSize(mLabels!!.size)
         return this

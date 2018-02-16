@@ -56,7 +56,7 @@ class ApproveActivity : AppCompatActivity(), ApplyService.IOnApplyListener, Appr
     private var mUserId: String? = null
     private var applyId: String? = null
     private var httpDialog: Dialog? = null
-    private var approves: Array<String?> = arrayOf()
+    private var approves: ArrayList<String?> = arrayListOf()
     private var approvePosition = 0
     private var approveType = 0
     private var approveService: ApproveService? = null
@@ -165,7 +165,8 @@ class ApproveActivity : AppCompatActivity(), ApplyService.IOnApplyListener, Appr
 
     override fun onSuccess(array: JSONArray?) {
         if (null != array && array.length() > 0) {
-            approves = arrayOfNulls(array.length())
+//            approves = arrayOfNulls(array.length())
+            approves.add("开始")
             try {
 
                 for (i in 0 until array.length()) {

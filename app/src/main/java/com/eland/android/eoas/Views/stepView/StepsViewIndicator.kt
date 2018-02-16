@@ -15,24 +15,11 @@ import java.util.ArrayList
 
 class StepsViewIndicator @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) : View(context, attrs, defStyle) {
 
+    private val startPaint = Paint()
     private val paint = Paint()
     private val selectedPaint = Paint()
-    private var mNumOfStep = 2
-    private var mLineHeight: Float = 0.toFloat()
-    private var mThumbRadius: Float = 0.toFloat()
-    private var mCircleRadius: Float = 0.toFloat()
-    private var mPadding: Float = 0.toFloat()
-    private var mThumbColor = Color.RED
-    private var mBarColor = Color.GRAY
 
-    private var mCenterY: Float = 0.toFloat()
-    private var mLeftX: Float = 0.toFloat()
-    private var mLeftY: Float = 0.toFloat()
-    private var mRightX: Float = 0.toFloat()
-    private var mRightY: Float = 0.toFloat()
-    private var mDelta: Float = 0.toFloat()
     private val mThumbContainerXPosition = ArrayList<Float>()
-    private var mCompletedPosition: Int = 0
     private var mDrawListener: OnDrawListener? = null
 
     val thumbContainerXPosition: List<Float>
@@ -70,9 +57,7 @@ class StepsViewIndicator @JvmOverloads constructor(context: Context, attrs: Attr
         mDelta = (mRightX - mLeftX) / (mNumOfStep - 1)
 
         mThumbContainerXPosition.add(mLeftX)
-        for (i in 1 until mNumOfStep - 1) {
-            mThumbContainerXPosition.add(mLeftX + i * mDelta)
-        }
+        (1 until mNumOfStep - 1).mapTo(mThumbContainerXPosition) { mLeftX + it * mDelta }
         mThumbContainerXPosition.add(mRightX)
         mDrawListener!!.onFinish()
     }
@@ -92,9 +77,7 @@ class StepsViewIndicator @JvmOverloads constructor(context: Context, attrs: Attr
         mDelta = (mRightX - mLeftX) / (mNumOfStep - 1)
 
         //mThumbContainerXPosition.add(mLeftX);
-        for (i in 1 until mNumOfStep - 1) {
-            mThumbContainerXPosition.add(mLeftX + i * mDelta)
-        }
+        (1 until mNumOfStep - 1).mapTo(mThumbContainerXPosition) { mLeftX + it * mDelta }
         //mThumbContainerXPosition.add(mRightX);
         mDrawListener!!.onFinish()
     }
@@ -130,6 +113,12 @@ class StepsViewIndicator @JvmOverloads constructor(context: Context, attrs: Attr
 
     @Synchronized override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+
+        startPaint.isAntiAlias = true
+        startPaint.color = mStartColor
+        startPaint.style = Paint.Style.STROKE
+        startPaint.strokeWidth = 2f
+
         // Draw rect bounds
         paint.isAntiAlias = true
         paint.color = mBarColor
@@ -141,10 +130,17 @@ class StepsViewIndicator @JvmOverloads constructor(context: Context, attrs: Attr
         selectedPaint.style = Paint.Style.STROKE
         selectedPaint.strokeWidth = 2f
 
+
+
         // Draw rest of the circle'Bounds
         for (i in mThumbContainerXPosition.indices) {
-            canvas.drawCircle(mThumbContainerXPosition[i], mCenterY, mCircleRadius,
-                    if (i <= mCompletedPosition) selectedPaint else paint)
+            if(i == 0) {
+                canvas.drawCircle(mThumbContainerXPosition[i], mCenterY, mCircleRadius, startPaint)
+            }
+            else {
+                canvas.drawCircle(mThumbContainerXPosition[i], mCenterY, mCircleRadius,
+                        if (i <= mCompletedPosition) selectedPaint else paint)
+            }
         }
 
         paint.style = Paint.Style.FILL
@@ -176,6 +172,24 @@ class StepsViewIndicator @JvmOverloads constructor(context: Context, attrs: Attr
     companion object {
 
         private val THUMB_SIZE = 100
+
+        private var mNumOfStep = 2
+        private var mLineHeight: Float = 0.toFloat()
+        private var mThumbRadius: Float = 0.toFloat()
+        private var mCircleRadius: Float = 0.toFloat()
+        private var mPadding: Float = 0.toFloat()
+        private var mThumbColor = Color.RED
+        private var mBarColor = Color.GRAY
+        private val mStartColor = Color.GREEN
+
+        private var mCenterY: Float = 0.toFloat()
+        private var mLeftX: Float = 0.toFloat()
+        private var mLeftY: Float = 0.toFloat()
+        private var mRightX: Float = 0.toFloat()
+        private var mRightY: Float = 0.toFloat()
+        private var mDelta: Float = 0.toFloat()
+
+        private var mCompletedPosition: Int = 0
 
         fun getColorWithAlpha(color: Int, ratio: Float): Int {
             var newColor = 0

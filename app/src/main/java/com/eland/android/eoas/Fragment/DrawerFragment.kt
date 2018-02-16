@@ -329,8 +329,7 @@ class DrawerFragment : Fragment, ChooseImageUtil.IOnCarmerListener, ChooseImageU
     }
 
     private fun checkRegServiceIsRunning(): Boolean? {
-        running = SystemMethodUtil.isWorked(context, "RegAutoService")
-        return running
+        return SystemMethodUtil.isWorked(context, "RegAutoService")
     }
 
     @OnClick(R.id.img_photo)
@@ -442,6 +441,7 @@ class DrawerFragment : Fragment, ChooseImageUtil.IOnCarmerListener, ChooseImageU
                             e.printStackTrace()
                         }
 
+                        //TODO(此处有问题，有优化的余地)
                         imageLocalPath = FileUtil.saveToSdCard(bitmap!!, context, fileName)
                         ConsoleUtil.d(TAG, "------imageLocalPath--------" + imageLocalPath)
                         //imgPhoto.setBackgroundDrawable(new BitmapDrawable(bitmap));
@@ -451,7 +451,7 @@ class DrawerFragment : Fragment, ChooseImageUtil.IOnCarmerListener, ChooseImageU
                         message.obj = bitmap
 
                         if (null != animation) {
-                            imgPhoto!!.startAnimation(animation)
+                            imgPhoto.startAnimation(animation)
                         }
 
                         uploadFileService!!.uploadFile(imageLocalPath, fileName, message)
@@ -498,6 +498,7 @@ class DrawerFragment : Fragment, ChooseImageUtil.IOnCarmerListener, ChooseImageU
      * 照相机
      */
     private fun getPicFromCamere() {
+        //文件操作不应该出现在这里，会延缓相机启动速度
         val f = File(FileUtil.getCacheDirectory(context, true, "pic").toString() + dateTime!!)
         if (f.exists()) {
             f.delete()

@@ -3,6 +3,7 @@ package com.eland.android.eoas.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -39,7 +40,7 @@ class ApplyStateActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
 
     private var applyId: String? = null
     private var httpDialog: Dialog? = null
-    private var approves: Array<String?> = arrayOf()// = {"审批人1", "审批人2", "审批人3"};
+    private var approves:  ArrayList<String?> = arrayListOf() //Array<String?> = arrayOf()// = {"审批人1", "审批人2", "审批人3"};
     private var approvePosition = 0
     private var mUserId: String? = null
 
@@ -102,14 +103,16 @@ class ApplyStateActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
 
     override fun onSuccess(array: JSONArray?) {
         if (null != array && array.length() > 0) {
-            approves = arrayOfNulls(array.length())
+//            approves = arr("开始")
+            approves.add("开始")
             try {
 
                 for (i in 0 until array.length()) {
                     val obj = array.getJSONObject(i)
-                    approves[i] = obj.getString("ApproveUserName")
-                    val approveState = obj.getString("ApproveStateName")
-                    if (approveState == "批准") {
+                    approves.add(obj.getString("ApproveUserName"))
+//                    approves[i] = obj.getString("ApproveUserName")
+//                    val approveState = obj.getString("ApproveStateName")
+                    if (obj.getString("ApproveStateName") == "批准") {
                         approvePosition++
                     }
                 }
@@ -117,11 +120,17 @@ class ApplyStateActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
                 e.printStackTrace()
             }
 
+            var color: Int = if (SDK_INT > 23) {
+                resources.getColor(R.color.md_red_500, theme)
+            }
+            else {
+                resources.getColor(R.color.md_red_500)
+            }
 
             step.setLabels(approves)
                     .setBarColor(Color.GRAY)
                     .setLabelColor(Color.GRAY)
-                    .setColorIndicator(resources.getColor(R.color.md_red_500))
+                    .setColorIndicator(color)
                     .setCompletedPosition(if (approvePosition == 0) 0 else approvePosition - 1)
         }
 
