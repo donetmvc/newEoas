@@ -9,7 +9,7 @@ import android.widget.TextView;
  * A {@link TextView} that maintains a consistent width to height aspect ratio.
  * In the real world this would likely extend ImageView.
  */
-public class DynamicHeightTextView extends TextView {
+public class DynamicHeightTextView extends android.support.v7.widget.AppCompatTextView {
 
     private double mHeightRatio;
 

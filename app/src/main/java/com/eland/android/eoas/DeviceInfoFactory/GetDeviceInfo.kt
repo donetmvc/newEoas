@@ -1,5 +1,6 @@
 package com.eland.android.eoas.DeviceInfoFactory
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.telephony.TelephonyManager
@@ -18,6 +19,7 @@ class GetDeviceInfo {
         contexts = context
     }
 
+    @SuppressLint("MissingPermission")
     fun getDeviceId(): String? {
         if(!PermissionUtils.hasSelfPermissions(contexts,
                 BaseActivity.READ_EXTERNAL_STORAGE_PERMISSION)) {

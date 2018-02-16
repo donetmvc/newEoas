@@ -1,9 +1,11 @@
 package com.eland.android.eoas.Fragment
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
@@ -12,9 +14,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
 
 import com.amap.api.location.AMapLocation
 import com.amap.api.location.AMapLocationClient
@@ -22,7 +22,6 @@ import com.amap.api.location.AMapLocationClientOption
 import com.amap.api.location.AMapLocationListener
 import com.eland.android.eoas.Model.ApproveListInfo
 import com.eland.android.eoas.Model.Constant
-import com.eland.android.eoas.Model.WetherInfo
 import com.eland.android.eoas.R
 import com.eland.android.eoas.Receiver.DeskCountChangeReceiver
 import com.eland.android.eoas.Service.ApproveListService
@@ -42,10 +41,10 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.eland.android.eoas.Activity.BaseActivity
 import com.eland.android.eoas.Adapt.WetherAdapter
-import com.eland.android.eoas.Http.IService.IOnGetWetherListener
-import com.eland.android.eoas.Http.IService.Wether
-import com.eland.android.eoas.Http.IService.WetherService
+import com.eland.android.eoas.Http.dataService.IOnGetWetherListener
+import com.eland.android.eoas.Http.dataService.WeatherDataService
 import com.eland.android.eoas.Model.WetherData
+import com.eland.android.eoas.Util.ProgressUtil
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.PermissionUtils
 import permissions.dispatcher.RuntimePermissions
@@ -56,14 +55,10 @@ import permissions.dispatcher.RuntimePermissions
 @RuntimePermissions
 class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLocationListener, IOnGetWetherListener {
 
-
-
-    @BindView(R.id.img_registSchedule)
-    lateinit var imgRegistSchedule: LinearLayout
     @BindView(R.id.txt_main_scroll)
     lateinit var txtMainScroll: ScrollTextView
-    @BindView(R.id.wether_recycl)
-    lateinit var recycl: RecyclerView
+    @BindView(R.id.recycle_weather)
+    lateinit var recycle: RecyclerView
 
     private var rootView: View? = null
     private var registScheduleFragment: RegistScheduleFragment? = null
@@ -82,31 +77,26 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
     private var longitude: Double = 0.toDouble()
 
     private var count = 0
-
+    private lateinit var loading: Dialog
 
     constructor() : super() {}
 
     @SuppressLint("ValidFragment")
     constructor(context: Context) {
-        //        this.context = context;
-        //        this.fragmentManager = getFragmentManager();
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        rootView = inflater!!.inflate(R.layout.main_fragment, null)
-
+        rootView = inflater!!.inflate(R.layout.fragment_main, null)
         ButterKnife.bind(this, rootView!!)
 
         approveListService = ApproveListService(context)
-
         options = ImageLoaderOption.getOptionsById(R.mipmap.default_wether)
         imageLoader = ImageLoader.getInstance()
         imageLoader!!.init(ImageLoaderConfiguration.createDefault(activity))
         mUserId = SharedReferenceHelper.getInstance(context).getValue(Constant.LOGINID)
         setApproveCount()
         setTitler()
-        setWehter()
-
+        loading = ProgressUtil.loading(context)
         return rootView
     }
 
@@ -114,15 +104,20 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
         approveListService!!.searchApproveList(mUserId!!, this)
     }
 
+    @Suppress("DEPRECATION")
     private fun setTitler() {
         txtMainScroll.textContent = "用户ID: " + mUserId + "   欢迎使用移动OA办公系统!" + "  今天是   " + formatWeekDay()
         txtMainScroll.textSize = 22
-        txtMainScroll.textColor = context!!.resources.getColor(R.color.text_color)
+
+        txtMainScroll.textColor = if (SDK_INT >= 23) {
+             context!!.resources.getColor(R.color.text_color, null)
+        }
+        else context!!.resources.getColor(R.color.text_color)
+
         txtMainScroll.backgroundColor = Color.WHITE
-        //imageLoader.displayImage("http://app1.showapi.com/weather/icon/night/02.png", imgWetherIcon, options);
     }
 
-    private fun setWehter() {
+    private fun setWeather() {
         if(!PermissionUtils.hasSelfPermissions(context,
                 BaseActivity.READ_EXTERNAL_STORAGE_PERMISSION,
                 BaseActivity.WRITE_EXTERNAL_STORAGE_PERMISSION,
@@ -139,7 +134,7 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         // NOTE: delegate the permission handling to generated method
         onRequestPermissionsResult(requestCode, grantResults)
-
+        showLoading()
         if(grantResults.all { it -> it == 0 }) {
             getLocation()
         }
@@ -172,7 +167,7 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
     private fun getWetherData(location: String) {
         mLocationClient?.stopLocation()
         mLocationClient?.onDestroy()
-        Wether().GetWetherList("d8d9cfec6b3f483eae480728172812", location, "5", this)
+        WeatherDataService.GetWetherList("d8d9cfec6b3f483eae480728172812", location, 5, this, WetherData::class.java)
     }
 
     private fun initOption() {
@@ -205,7 +200,7 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
 
     override fun onStart() {
         super.onStart()
-        setWehter()
+        setWeather()
         ConsoleUtil.i(TAG, "-------Fragment onStart---------------")
     }
 
@@ -227,17 +222,11 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
 
     @OnClick(R.id.img_registSchedule)
     internal fun goRegistSchedule() {
-        //        registScheduleFragment = new RegistScheduleFragment(context);
-        //        Fragment mainFragment = fragmentManager.getFragments().get(1);
-
         val ft = fragmentManager!!.findFragmentByTag("RegistFragment")
         val args = Bundle()
         registScheduleFragment = if (ft == null) RegistScheduleFragment.newInstance(args) else ft as RegistScheduleFragment
 
-        //contactFragment = new ContactFragment(context);
-        val mainFragment = fragmentManager!!.findFragmentByTag("MainFragment")
-
-        goView(mainFragment, registScheduleFragment!!, "RegistFragment")
+        goView(registScheduleFragment!!, "RegistFragment")
     }
 
     @OnClick(R.id.img_contact)
@@ -246,74 +235,52 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
         val args = Bundle()
         contactFragment = if (ft == null) ContactFragment.newInstance(args) else ft as ContactFragment
 
-        //contactFragment = new ContactFragment(context);
-        val mainFragment = fragmentManager!!.findFragmentByTag("MainFragment")
-        goView(mainFragment, contactFragment!!, "ContactFragment")
+        goView(contactFragment!!, "ContactFragment")
     }
 
     @OnClick(R.id.img_searchSchedule)
     internal fun goSearchSchedule() {
-        //        SearchScheduleFragment searchScheduleFragment = new SearchScheduleFragment(context);
-        //        Fragment mainFragment = fragmentManager.getFragments().get(1);
         val ft = fragmentManager!!.findFragmentByTag("SearchScheduleFragment")
         val args = Bundle()
         val searchScheduleFragment = if (ft == null) SearchScheduleFragment.newInstance(args) else ft as SearchScheduleFragment
 
-        //contactFragment = new ContactFragment(context);
-        val mainFragment = fragmentManager!!.findFragmentByTag("MainFragment")
-        goView(mainFragment, searchScheduleFragment, "SearchScheduleFragment")
+        goView(searchScheduleFragment, "SearchScheduleFragment")
     }
 
     @OnClick(R.id.img_applyList)
     internal fun goApplyList() {
-        //        ApplyListFragment applyListFragment = new ApplyListFragment(context);
-        //        Fragment mainFragment = fragmentManager.getFragments().get(1);
-
         val ft = fragmentManager!!.findFragmentByTag("ApplyListFragment")
         val args = Bundle()
         val applyListFragment = if (ft == null) ApplyListFragment.newInstance(args) else ft as ApplyListFragment
 
-        //contactFragment = new ContactFragment(context);
-        val mainFragment = fragmentManager!!.findFragmentByTag("MainFragment")
-        goView(mainFragment, applyListFragment, "ApplyListFragment")
+        goView(applyListFragment, "ApplyListFragment")
     }
 
     @OnClick(R.id.img_approveList)
     internal fun goApproveList() {
-        //        ApproveListFragment approveListFragment = new ApproveListFragment(context);
-        //        Fragment mainFragment = fragmentManager.getFragments().get(1);
-
         val ft = fragmentManager!!.findFragmentByTag("ApproveListFragment")
         val args = Bundle()
         val approveListFragment = if (ft == null) ApproveListFragment.newInstance(args) else ft as ApproveListFragment
 
-        //contactFragment = new ContactFragment(context);
-        val mainFragment = fragmentManager!!.findFragmentByTag("MainFragment")
-        goView(mainFragment, approveListFragment, "ApproveListFragment")
+        goView(approveListFragment, "ApproveListFragment")
     }
 
-    private fun goView(from: Fragment, to: Fragment, tag: String) {
+    private fun goView(to: Fragment, tag: String) {
+        val from = fragmentManager!!.findFragmentByTag("MainFragment")
         val transaction = fragmentManager!!.beginTransaction()
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
         transaction.setCustomAnimations(R.anim.push_up_in, R.anim.push_up_out)
-        //hideFragments(transaction);
         if (from.isAdded) {
             transaction.hide(from).add(R.id.main_content, to, tag).addToBackStack(null).commit()
-            //transaction.add(R.id.main_content, registScheduleFragment);
         } else {
             transaction.hide(from).show(to).commit()
-            //transaction.show(registScheduleFragment);
+
         }
-        //        transaction.addToBackStack(null);
-        //        transaction.commit();
     }
 
-    private fun hideFragments(transaction: FragmentTransaction) {
-        //if (registScheduleFragment != null) {
-        transaction.hide(this)
-        //}
+    private fun showLoading() {
+        if(loading.isShowing) loading.hide() else loading.show()
     }
-
 
     private fun formatWeekDay(): String {
 
@@ -347,7 +314,6 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
 
     override fun onDestroyView() {
         super.onDestroyView()
-//        ButterKnife.unbind(this)
         mLocationClient?.stopLocation()
         mLocationClient?.onDestroy()
     }
@@ -364,24 +330,20 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
     }
 
     override fun onFailure(code: Int, msg: String) {
-
+        showLoading()
     }
 
     override fun onGetWetherSuccess(result: Any) {
-        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        print(result)
-
-        recycl.layoutManager = LinearLayoutManager(context).apply { orientation = LinearLayoutManager.HORIZONTAL }
-        recycl.adapter = WetherAdapter((result as WetherData).forecast.forecastday)
+        showLoading()
+        recycle.layoutManager = LinearLayoutManager(context).apply { orientation = LinearLayoutManager.HORIZONTAL }
+        recycle.adapter = WetherAdapter((result as WetherData).forecast.forecastday)
     }
 
     override fun onGetWetherFailure() {
-        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        showLoading()
     }
 
     companion object {
-        private val SCHEDULE_REGISTER = 10    //打卡
-
         fun newInstance(args: Bundle): MainFragment {
             val f = MainFragment()
             f.arguments = args

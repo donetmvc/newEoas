@@ -266,7 +266,7 @@ public class StaggeredGridView extends ExtendableListView {
                 childHeightSpec = View.MeasureSpec.makeMeasureSpec(layoutParams.height, View.MeasureSpec.EXACTLY);
             }
             else {
-                childHeightSpec = View.MeasureSpec.makeMeasureSpec(LayoutParams.WRAP_CONTENT, View.MeasureSpec.EXACTLY);
+                childHeightSpec = View.MeasureSpec.makeMeasureSpec(0, MeasureSpec.AT_MOST);
             }
             child.measure(childWidthSpec, childHeightSpec);
         }

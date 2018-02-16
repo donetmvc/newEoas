@@ -15,7 +15,7 @@ import android.widget.EditText;
 /**
  * Created by liu.wenbin on 15/11/10.
  */
-public class EditTextView extends EditText{
+public class EditTextView extends android.support.v7.widget.AppCompatEditText{
 
     private Drawable mRightDrawable;
     private boolean isHasFocus;

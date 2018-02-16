@@ -7,7 +7,7 @@ import android.widget.ImageView;
 /**
  * An {@link ImageView} layout that maintains a consistent width to height aspect ratio.
  */
-public class DynamicHeightImageView extends ImageView {
+public class DynamicHeightImageView extends android.support.v7.widget.AppCompatImageView {
 
     private double mHeightRatio;
 

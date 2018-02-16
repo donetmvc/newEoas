@@ -26,7 +26,10 @@ import com.eland.android.eoas.Util.ConsoleUtil
  */
 class RegWorkInfoService : Service(), AMapLocationListener, ScheduleService.IScheduleListener {
 
-    var onAction = { distance: Float -> Unit }
+    var onAction = { _: Float -> Unit }
+    private var scheduleService: ScheduleService? = null
+    //声明AMapLocationClient类对象
+    var mLocationClient: AMapLocationClient? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         //        initMap();
@@ -208,10 +211,10 @@ class RegWorkInfoService : Service(), AMapLocationListener, ScheduleService.ISch
         return myBinder()
     }
 
-    inner class myBinder : Binder() {
-        val service: RegWorkInfoService
-            get() = this@RegWorkInfoService
-    }
+//    inner class myBinder : Binder() {
+//        val service: RegWorkInfoService
+//            get() = this@RegWorkInfoService
+//    }
 
     fun stopService() {
         if (null != scheduleService) {
@@ -223,8 +226,7 @@ class RegWorkInfoService : Service(), AMapLocationListener, ScheduleService.ISch
     }
 
     companion object {
-        //声明AMapLocationClient类对象
-        var mLocationClient: AMapLocationClient? = null
+
         var mLocationOption: AMapLocationClientOption? = null
         var TAG = "EOAS"
         var imei = ""
@@ -235,7 +237,12 @@ class RegWorkInfoService : Service(), AMapLocationListener, ScheduleService.ISch
         private var notificationManager: NotificationManager? = null
         private var icon: Bitmap? = null
         private val regCount = 0
-        private var scheduleService: ScheduleService? = null
+//        private var regWorService: RegWorkInfoService? = null
+
+        open class myBinder : Binder() {
+            val service: RegWorkInfoService
+                get() = RegWorkInfoService()
+        }
     }
 
 }

@@ -219,8 +219,12 @@ class RegAutoService : Service(), AMapLocationListener, ScheduleService.ISchedul
         return myBinder()
     }
 
-    inner class myBinder : Binder() {
-        val service: RegAutoService
-            get() = this@RegAutoService
+    companion object {
+        class myBinder : Binder() {
+            val service: RegAutoService
+                get() = RegAutoService()
+        }
     }
+
+
 }

@@ -32,10 +32,10 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.eland.android.eoas.DeviceInfoFactory.GetDeviceInfo
 import com.eland.android.eoas.Service.*
-import com.eland.android.eoas.Service.RegWorkInfoService.Companion.distance
 import pl.droidsonroids.gif.AnimationListener
 import pl.droidsonroids.gif.GifDrawable
 import pl.droidsonroids.gif.GifImageView
+import java.lang.ref.WeakReference
 
 /**
  * Created by liu.wenbin on 15/11/30.
@@ -52,7 +52,6 @@ class RegistScheduleFragment : Fragment, AnimationListener, ScheduleService.ISch
     private var gifDrawable: GifDrawable? = null
     private val autoRegist = false
     private var scheduleService: ScheduleService? = null
-    internal var telephonyManager: TelephonyManager? = null
     private var imei: String? = null
     private var am_pm: Int = 0
     private var isAM: String? = null
@@ -67,7 +66,7 @@ class RegistScheduleFragment : Fragment, AnimationListener, ScheduleService.ISch
 
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             //返回一个MsgService对象
-            regWorkInfoService = (service as RegWorkInfoService.myBinder).service
+            regWorkInfoService = (service as RegWorkInfoService.Companion.myBinder).service
             regWorkInfoService!!.startService(imei!!, isAM!!, "MANUAL")
 
             regWorkInfoService!!.onAction = fun(distance: Float) {
@@ -84,28 +83,26 @@ class RegistScheduleFragment : Fragment, AnimationListener, ScheduleService.ISch
         }
     }
 
-    var handler: Handler = object : Handler() {
-
-        override fun handleMessage(msg: Message) {
-            super.handleMessage(msg)
-
-            if (null != context && null != txtDistance) {
-                if (msg.what == CANREGIST) {
-                    context!!.unbindService(conn!!)
-                    scheduleService!!.regScheduleAM(imei!!, isAM!!)
-                    txtDistance!!.visibility = View.GONE
-                } else {
-                    val distance = msg.obj as Float
-                    txtDistance!!.visibility = View.VISIBLE
-                    txtDistance!!.text = "距离考勤点还有" + distance.toString() + "米"
-                }
-            }
-        }
-    }
-
-//    var handler: Handler = Handler().handleMessage({
+//    var handler: Handler = object : Handler() {
 //
-//    })
+//        override fun handleMessage(msg: Message) {
+//            super.handleMessage(msg)
+//
+//            if (null != context && null != txtDistance) {
+//                if (msg.what == CANREGIST) {
+//                    context!!.unbindService(conn!!)
+//                    scheduleService!!.regScheduleAM(imei!!, isAM!!)
+//                    txtDistance!!.visibility = View.GONE
+//                } else {
+//                    val distance = msg.obj as Float
+//                    txtDistance!!.visibility = View.VISIBLE
+//                    txtDistance!!.text = "距离考勤点还有" + distance.toString() + "米"
+//                }
+//            }
+//        }
+//    }
+
+    var handler: Handler = RegHandler(this)
 
     constructor() : super() {}
 
@@ -253,5 +250,27 @@ class RegistScheduleFragment : Fragment, AnimationListener, ScheduleService.ISch
             f.arguments = args
             return f
         }
+
+        class RegHandler(fragment: RegistScheduleFragment): Handler() {
+            private var outFragment: WeakReference<RegistScheduleFragment> = WeakReference(fragment)
+
+            override fun handleMessage(msg: Message?) {
+                super.handleMessage(msg)
+                val frag = outFragment.get()
+                if (null != frag?.context) {
+                    if (msg?.what == frag.CANREGIST) {
+                        frag.context.unbindService(frag.conn!!)
+                        frag.scheduleService!!.regScheduleAM(frag.imei!!,frag. isAM!!)
+                        frag.txtDistance.visibility = View.GONE
+                    } else {
+                        val distance = msg?.obj as Float
+                        frag.txtDistance.visibility = View.VISIBLE
+                        frag.txtDistance.text = "距离考勤点还有${distance}米"
+                    }
+                }
+            }
+
+        }
+
     }
 }
