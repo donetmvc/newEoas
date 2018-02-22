@@ -21,11 +21,9 @@ import okhttp3.logging.HttpLoggingInterceptor
 class HttpManager {
 
     companion object {
-        val baseUri = "http://api.apixu.com"
+        private const val baseUri = "http://api.apixu.com"
 
-        val context: Context = EOASApplication.applicationContext()
-
-        private val cacheDirectory = File(context.cacheDir.absoluteFile, "HttpCache")
+        private val cacheDirectory = File(EOASApplication.applicationContext().cacheDir.absoluteFile, "HttpCache")
 
         private val client: OkHttpClient = OkHttpClient().newBuilder()
                 .cache(Cache(cacheDirectory, (10 * 1024 * 1024).toLong()))
@@ -50,7 +48,7 @@ class HttpManager {
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .baseUrl(baseUri)
-                .build()
+                .build()!!
     }
 
 }

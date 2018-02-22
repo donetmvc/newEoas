@@ -28,6 +28,10 @@ class RegWorkInfoService : Service(), AMapLocationListener, ScheduleService.ISch
 
     var onAction = { distance: Float -> Unit }
 
+    private var scheduleService: ScheduleService? = null
+    //声明AMapLocationClient类对象
+    var mLocationClient: AMapLocationClient? = null
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         //        initMap();
         //
@@ -104,7 +108,7 @@ class RegWorkInfoService : Service(), AMapLocationListener, ScheduleService.ISch
     }
 
     override fun onLocationChanged(amapLocation: AMapLocation?) {
-        if (amapLocation != null) {
+        @Synchronized if (amapLocation != null) {
             if (amapLocation.errorCode == 0) {
                 val latitude = amapLocation.latitude//获取纬度
                 val longitude = amapLocation.longitude//获取经度
@@ -134,10 +138,7 @@ class RegWorkInfoService : Service(), AMapLocationListener, ScheduleService.ISch
                         startRegService()
                     }
                 } else {
-                    if (null != onAction) {
-//                        onLocationChanged!!.onLocationSuccess(distance)
-                        onAction(distance)
-                    }
+                    onAction(distance)
                 }
             } else {
                 //显示错误信息ErrCode是错误码，errInfo是错误信息，详见错误码表。
@@ -195,13 +196,13 @@ class RegWorkInfoService : Service(), AMapLocationListener, ScheduleService.ISch
     }
 
     override fun onDestroy() {
-        if (null != scheduleService) {
-            scheduleService!!.cancel()
-        }
-        mLocationClient!!.stopLocation()
-        mLocationClient!!.onDestroy()
-        stopSelf()
+        stopService()
         super.onDestroy()
+    }
+
+    override fun onUnbind(intent: Intent?): Boolean {
+        stopService()
+        return super.onUnbind(intent)
     }
 
     override fun onBind(intent: Intent): IBinder? {
@@ -223,8 +224,6 @@ class RegWorkInfoService : Service(), AMapLocationListener, ScheduleService.ISch
     }
 
     companion object {
-        //声明AMapLocationClient类对象
-        var mLocationClient: AMapLocationClient? = null
         var mLocationOption: AMapLocationClientOption? = null
         var TAG = "EOAS"
         var imei = ""
@@ -235,7 +234,6 @@ class RegWorkInfoService : Service(), AMapLocationListener, ScheduleService.ISch
         private var notificationManager: NotificationManager? = null
         private var icon: Bitmap? = null
         private val regCount = 0
-        private var scheduleService: ScheduleService? = null
     }
 
 }

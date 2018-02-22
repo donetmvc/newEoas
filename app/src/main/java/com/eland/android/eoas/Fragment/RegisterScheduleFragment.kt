@@ -5,10 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.os.Bundle
-import android.os.Handler
-import android.os.IBinder
-import android.os.Message
+import android.os.*
 import android.support.v4.app.Fragment
 import android.telephony.TelephonyManager
 import android.view.LayoutInflater
@@ -36,11 +33,12 @@ import com.eland.android.eoas.Service.RegWorkInfoService.Companion.distance
 import pl.droidsonroids.gif.AnimationListener
 import pl.droidsonroids.gif.GifDrawable
 import pl.droidsonroids.gif.GifImageView
+import java.lang.ref.WeakReference
 
 /**
  * Created by liu.wenbin on 15/11/30.
  */
-class RegistScheduleFragment : Fragment, AnimationListener, ScheduleService.IScheduleListener {
+class RegisterScheduleFragment : Fragment, AnimationListener, ScheduleService.IScheduleListener {
 
     @BindView(R.id.img_gif)
     lateinit var imgGif: GifImageView
@@ -50,9 +48,8 @@ class RegistScheduleFragment : Fragment, AnimationListener, ScheduleService.ISch
     private val TAG = "EOAS"
     private var rootView: View? = null
     private var gifDrawable: GifDrawable? = null
-    private val autoRegist = false
+    private val autoRegister = false
     private var scheduleService: ScheduleService? = null
-    internal var telephonyManager: TelephonyManager? = null
     private var imei: String? = null
     private var am_pm: Int = 0
     private var isAM: String? = null
@@ -73,6 +70,7 @@ class RegistScheduleFragment : Fragment, AnimationListener, ScheduleService.ISch
             regWorkInfoService!!.onAction = fun(distance: Float) {
                 val msg = Message()
                 if (distance < 300.00f) {
+                    regWorkInfoService!!.stopService()
                     msg.what = CANREGIST
                     handler.sendMessage(msg)
                 } else {
@@ -84,28 +82,7 @@ class RegistScheduleFragment : Fragment, AnimationListener, ScheduleService.ISch
         }
     }
 
-    var handler: Handler = object : Handler() {
-
-        override fun handleMessage(msg: Message) {
-            super.handleMessage(msg)
-
-            if (null != context && null != txtDistance) {
-                if (msg.what == CANREGIST) {
-                    context!!.unbindService(conn!!)
-                    scheduleService!!.regScheduleAM(imei!!, isAM!!)
-                    txtDistance!!.visibility = View.GONE
-                } else {
-                    val distance = msg.obj as Float
-                    txtDistance!!.visibility = View.VISIBLE
-                    txtDistance!!.text = "距离考勤点还有" + distance.toString() + "米"
-                }
-            }
-        }
-    }
-
-//    var handler: Handler = Handler().handleMessage({
-//
-//    })
+    var handler: Handler = MyHandler(WeakReference(this))
 
     constructor() : super() {}
 
@@ -125,7 +102,7 @@ class RegistScheduleFragment : Fragment, AnimationListener, ScheduleService.ISch
 
         initFragment()
 
-        if (autoRegist) {
+        if (autoRegister) {
             setActiveImg()
         }
 
@@ -149,7 +126,7 @@ class RegistScheduleFragment : Fragment, AnimationListener, ScheduleService.ISch
     }
 
     @OnClick(R.id.img_gif)
-    internal fun regist() {
+    internal fun register() {
         if (gifDrawable != null) {
             setDisableImg()
         } else {
@@ -166,10 +143,10 @@ class RegistScheduleFragment : Fragment, AnimationListener, ScheduleService.ISch
             e.printStackTrace()
         }
 
-        startRegist()
+        startRegister()
     }
 
-    private fun startRegist() {
+    private fun startRegister() {
         if (isAM == "PM") {
             val intent = Intent(context, RegWorkInfoService::class.java)
             context.bindService(intent, conn, Context.BIND_AUTO_CREATE)
@@ -190,10 +167,10 @@ class RegistScheduleFragment : Fragment, AnimationListener, ScheduleService.ISch
             }
             gifDrawable = null
         }
-        stopRegist()
+        stopRegister()
     }
 
-    private fun stopRegist() {
+    private fun stopRegister() {
         if (SystemMethodUtil.isWorked(context, "RegWorkInfoService")) {
             ConsoleUtil.i(TAG, "---------------Service is running,you can stop it.--------------")
             if (null != conn) {
@@ -213,7 +190,7 @@ class RegistScheduleFragment : Fragment, AnimationListener, ScheduleService.ISch
     override fun onDestroyView() {
         super.onDestroyView()
         scheduleService!!.cancel()
-        stopRegist()
+        stopRegister()
 //        ButterKnife.unbind(this)
     }
 
@@ -246,12 +223,44 @@ class RegistScheduleFragment : Fragment, AnimationListener, ScheduleService.ISch
         super.onDetach()
     }
 
+    @Synchronized
+    private fun updateDistance(message: Message) {
+        when(message.what) {
+            CANREGIST -> {
+                if(freeConn) {
+                    context!!.unbindService(conn!!)
+                    freeConn = false
+                }
+                scheduleService!!.regScheduleAM(imei!!, isAM!!)
+                txtDistance.visibility = View.GONE
+            }
+            NOTREGIST -> {
+                val distance = message.obj as Float
+                txtDistance.visibility = View.VISIBLE
+                txtDistance.text = "距离考勤点还有${distance.toString()}米"
+            }
+            else -> {
+            }
+        }
+    }
+
     companion object {
 
-        fun newInstance(args: Bundle): RegistScheduleFragment {
-            val f = RegistScheduleFragment()
+        @kotlin.jvm.Volatile
+        var freeConn  = true
+
+        fun newInstance(args: Bundle): RegisterScheduleFragment {
+            val f = RegisterScheduleFragment()
             f.arguments = args
             return f
         }
+
+        private class MyHandler(private val fragment: WeakReference<RegisterScheduleFragment>): Handler() {
+            override fun handleMessage(msg: Message) {
+                super.handleMessage(msg)
+                fragment.get()?.updateDistance(msg)
+            }
+        }
+
     }
 }

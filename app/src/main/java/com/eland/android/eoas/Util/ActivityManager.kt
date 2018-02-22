@@ -1,8 +1,7 @@
 package com.eland.android.eoas.Util
 
 import android.app.Activity
-
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Created by liu.wenbin on 15/11/10.
@@ -30,8 +29,8 @@ class ActivityManager private constructor() {
 
         private var activityList: ArrayList<Activity>? = null
 
-//        val topActivity: Activity
-//            get() = activityList[activityList.size - 1]
+        private var activities: Collection<Activity>? = null
+
 
         private var activityManager: ActivityManager? = null
 

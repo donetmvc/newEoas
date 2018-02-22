@@ -66,7 +66,7 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
     lateinit var recycl: RecyclerView
 
     private var rootView: View? = null
-    private var registScheduleFragment: RegistScheduleFragment? = null
+    private var registScheduleFragment: RegisterScheduleFragment? = null
     private var contactFragment: ContactFragment? = null
     private val TAG = "EOAS"
     private var mUserId: String? = null
@@ -232,7 +232,7 @@ class MainFragment : Fragment, ApproveListService.IOnApproveListListener, AMapLo
 
         val ft = fragmentManager!!.findFragmentByTag("RegistFragment")
         val args = Bundle()
-        registScheduleFragment = if (ft == null) RegistScheduleFragment.newInstance(args) else ft as RegistScheduleFragment
+        registScheduleFragment = if (ft == null) RegisterScheduleFragment.newInstance(args) else ft as RegisterScheduleFragment
 
         //contactFragment = new ContactFragment(context);
         val mainFragment = fragmentManager!!.findFragmentByTag("MainFragment")

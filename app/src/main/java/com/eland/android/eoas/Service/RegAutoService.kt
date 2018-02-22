@@ -125,8 +125,8 @@ class RegAutoService : Service(), AMapLocationListener, ScheduleService.ISchedul
                 ConsoleUtil.d(TAG, "维度: $latitude, 经度: $longitude")
                 //维度: 39.979221, 经度: 116.495874
                 val startLatlng = LatLng(amapLocation.latitude, amapLocation.longitude)
-                val endLatlng = LatLng(39.98023200, 116.49513900)
-                val endLatlng1 = LatLng(39.97922100, 116.49587400)
+                val endLatlng = LatLng(38.98023200, 114.49513900)
+                val endLatlng1 = LatLng(38.97922100, 114.49587400)
                 val distance1 = AMapUtils.calculateLineDistance(startLatlng, endLatlng)
                 val distance2 = AMapUtils.calculateLineDistance(startLatlng, endLatlng1)
 
@@ -141,7 +141,7 @@ class RegAutoService : Service(), AMapLocationListener, ScheduleService.ISchedul
 
                 if (type == "AUTO") {
 
-                    if (distance < 99999900.0) {
+                    if (distance < 300.0) {
                         //ConsoleUtil.i(TAG, "----------RegWorkInfoService:" + "Location end");
                         mLocationClient!!.stopLocation()
                         startRegService()

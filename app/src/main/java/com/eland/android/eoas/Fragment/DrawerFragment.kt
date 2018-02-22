@@ -5,17 +5,20 @@ import android.app.Activity
 import android.app.AlarmManager
 import android.app.Dialog
 import android.app.PendingIntent
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.provider.MediaStore
 import android.support.v4.app.Fragment
+import android.support.v4.content.FileProvider
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -67,9 +70,11 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import cn.jpush.android.api.JPushInterface
+import com.eland.android.eoas.BuildConfig
 import com.eland.android.eoas.DeviceInfoFactory.GetDeviceInfo
 import com.eland.android.eoas.Jobs.DemoSyncJob
 import me.drakeet.materialdialog.MaterialDialog
+import kotlin.math.acos
 
 
 /**
@@ -448,7 +453,8 @@ class DrawerFragment : Fragment, ChooseImageUtil.IOnCarmerListener, ChooseImageU
                         //imgPhoto.setImageBitmap(bitmap);
 
                         val message = Message()
-                        message.obj = bitmap
+//                        message.obj = bitmap
+                        bitmap?.recycle()
 
                         if (null != animation) {
                             imgPhoto.startAnimation(animation)
@@ -464,10 +470,11 @@ class DrawerFragment : Fragment, ChooseImageUtil.IOnCarmerListener, ChooseImageU
                         imageLocalPath = FileUtil.saveToSdCard(bitmap, context, fileName)
                         //imgPhoto.setImageBitmap(bitmap);
                         val message = Message()
-                        message.obj = bitmap
+//                        message.obj = bitmap
+                        bitmap.recycle()
 
                         if (null != animation) {
-                            imgPhoto!!.startAnimation(animation)
+                            imgPhoto.startAnimation(animation)
                         }
 
                         uploadFileService!!.uploadFile(imageLocalPath, fileName, message)
@@ -482,7 +489,7 @@ class DrawerFragment : Fragment, ChooseImageUtil.IOnCarmerListener, ChooseImageU
     }
 
     private fun setBitmap(bitmap: Bitmap) {
-        imgPhoto!!.setImageBitmap(bitmap)
+        imgPhoto.setImageBitmap(bitmap)
     }
 
     /**
@@ -498,23 +505,100 @@ class DrawerFragment : Fragment, ChooseImageUtil.IOnCarmerListener, ChooseImageU
      * 照相机
      */
     private fun getPicFromCamere() {
-        //文件操作不应该出现在这里，会延缓相机启动速度
-        val f = File(FileUtil.getCacheDirectory(context, true, "pic").toString() + dateTime!!)
-        if (f.exists()) {
-            f.delete()
-        }
-        try {
-            f.createNewFile()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
+        val f = File(FileUtil.getCacheDirectory(activity, true, "pic").toString() + dateTime!!)
+        val intent = Intent()
+        var contentUri: Uri? = null
 
-        val uri = Uri.fromFile(f)
-        Log.d(TAG, "---------------" + uri + "")
+        //子线程
+        val thread = Thread(Runnable {
+            if (f.exists()) {
+                f.delete()
+            }
+            try {
+                f.createNewFile()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
 
-        val camera = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        camera.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-        startActivityForResult(camera, REQUEST_CODE_CAMERA)
+//            txtName.text = "1234"
+            try {
+                intent.action = MediaStore.ACTION_IMAGE_CAPTURE
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    contentUri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.fileProvider", f)
+                }
+                else {
+                    contentUri = Uri.fromFile(f)
+                }
+            }
+            catch (e: ActivityNotFoundException) {
+
+            }
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
+            startActivityForResult(intent, REQUEST_CODE_CAMERA)
+        }, "PIC")
+
+//        运行在主线程
+//        thread.run {
+//            if (f.exists()) {
+//                f.delete()
+//            }
+//            try {
+//                f.createNewFile()
+//            } catch (e: IOException) {
+//                e.printStackTrace()
+//            }
+//
+//            txtName.text = "1234"
+//            try {
+//                intent.action = MediaStore.ACTION_IMAGE_CAPTURE
+//                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                    intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+//                    contentUri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.fileProvider", f)
+//                }
+//                else {
+//                    contentUri = Uri.fromFile(f)
+//                }
+//            }
+//            catch (e: ActivityNotFoundException) {
+//
+//            }
+//            intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
+//            startActivityForResult(intent, REQUEST_CODE_CAMERA)
+//        }
+        thread.start()
+
+//        也是运行在主线程
+//        val runnable = MyRunnable {
+//            if (f.exists()) {
+//                f.delete()
+//            }
+//            try {
+//                f.createNewFile()
+//            } catch (e: IOException) {
+//                e.printStackTrace()
+//            }
+//
+////            txtName.text = "1234"
+//
+//            try {
+//                intent.action = MediaStore.ACTION_IMAGE_CAPTURE
+//                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                    intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+//                    contentUri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.fileProvider", f)
+//                }
+//                else {
+//                    contentUri = Uri.fromFile(f)
+//                }
+//            }
+//            catch (e: ActivityNotFoundException) {
+//
+//            }
+//            intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
+//            startActivityForResult(intent, REQUEST_CODE_CAMERA)
+//        }
+//
+//        handler.post(runnable)
     }
 
     override fun onUploadSuccess(message: Message) {
@@ -590,5 +674,11 @@ class DrawerFragment : Fragment, ChooseImageUtil.IOnCarmerListener, ChooseImageU
         const val REQUEST_CODE_CAMERA = 1
         const val REQUEST_CODE_IMAGE = 2
         const val REQUEST_CODE_RESULT = 3
+
+        class MyRunnable(private val action: () -> Unit): Runnable {
+            override fun run() {
+                action()
+            }
+        }
     }
 }

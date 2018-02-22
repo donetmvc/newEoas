@@ -23,6 +23,7 @@ class UploadFileService(private val context: Context) {
         val uri = "api/UploadImage"
 
         val myFile = File(path)
+        if(!myFile.exists()) throw NullPointerException("File didn't exists!")
         val params = RequestParams()
         try {
             params.put(fileName, myFile)
