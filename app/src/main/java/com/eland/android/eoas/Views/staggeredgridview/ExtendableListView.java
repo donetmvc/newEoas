@@ -225,6 +225,7 @@ public abstract class ExtendableListView extends AbsListView {
     @Override
     protected void onFocusChanged(boolean gainFocus, int direction, Rect previouslyFocusedRect) {
         // TODO : handle focus and its impact on selection - if we add item selection support
+        super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
     }
 
     @Override

@@ -10,6 +10,7 @@ import cn.jpush.android.api.JPushInterface
 import com.eland.android.eoas.BuildConfig
 import com.eland.android.eoas.Jobs.DemoJobCreator
 import com.eland.android.eoas.Jobs.MyLogger
+import com.eland.android.eoas.core.Eoas
 import com.evernote.android.job.JobConfig
 import com.evernote.android.job.JobManager
 import com.orhanobut.logger.AndroidLogAdapter
@@ -34,6 +35,8 @@ class EOASApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        Eoas.initIcon()
 
         //val context: Context = EOASApplication.applicationContext()
 

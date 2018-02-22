@@ -1,16 +1,18 @@
 package com.eland.android.eoas.Service
 
 import android.app.Notification
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
-import android.support.v7.app.NotificationCompat
+import android.support.annotation.RequiresApi
 
 import com.amap.api.location.AMapLocation
 import com.amap.api.location.AMapLocationClient
@@ -26,11 +28,10 @@ import com.eland.android.eoas.Util.ConsoleUtil
  */
 class RegWorkInfoService : Service(), AMapLocationListener, ScheduleService.IScheduleListener {
 
-    var onAction = { distance: Float -> Unit }
-
+    var onAction = { _: Float -> Unit }
     private var scheduleService: ScheduleService? = null
     //声明AMapLocationClient类对象
-    var mLocationClient: AMapLocationClient? = null
+    private var mLocationClient: AMapLocationClient? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         //        initMap();
@@ -160,6 +161,7 @@ class RegWorkInfoService : Service(), AMapLocationListener, ScheduleService.ISch
         stopSelf()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun showNotification(regType: String) {
         var message = ""
         val notification: Notification
@@ -170,23 +172,32 @@ class RegWorkInfoService : Service(), AMapLocationListener, ScheduleService.ISch
             message = "已尝试10次，都失败，请联系管理人员."
         }
 
-        if (Build.VERSION.SDK_INT >= 16) {
-            notification = NotificationCompat.Builder(applicationContext)
-                    .setLargeIcon(icon)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setTicker("出勤通知").setContentInfo("移动OA")
-                    .setContentTitle("出勤通知").setContentText(message)
-                    .setAutoCancel(true).setDefaults(Notification.DEFAULT_ALL)
-                    .build()
-        } else {
-            notification = Notification.Builder(this)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setTicker("TickerText:" + "出勤通知")
-                    .setContentTitle("出勤通知")
-                    .setContentText(message)
-                    .setNumber(1)
-                    .notification
-        }
+        val id = "my_eoas_push"
+        // 用户可以看到的通知渠道的名字.
+        val name = "Eoas Push"
+        // 用户可以看到的通知渠道的描述
+        val description = "Eoas考勤通知"
+        val importance = NotificationManager.IMPORTANCE_HIGH;
+        val mChannel = NotificationChannel(id, name, importance)
+        // 配置通知渠道的属性
+        mChannel.description = description
+        // 设置通知出现时的闪灯（如果 android 设备支持的话）
+        mChannel.enableLights(true)
+        mChannel.lightColor = Color.RED
+        // 设置通知出现时的震动（如果 android 设备支持的话）
+        mChannel.enableVibration(true);
+        mChannel.vibrationPattern = longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 400)
+        //最后在notificationmanager中创建该通知渠道
+        notificationManager?.createNotificationChannel(mChannel);
+
+
+        notification = Notification.Builder(this, id)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setTicker("TickerText:" + "出勤通知")
+                .setContentTitle("出勤通知")
+                .setContentText(message)
+                .setNumber(1)
+                .build()
         notificationManager!!.notify(0, notification)
     }
 
@@ -209,11 +220,6 @@ class RegWorkInfoService : Service(), AMapLocationListener, ScheduleService.ISch
         return myBinder()
     }
 
-    inner class myBinder : Binder() {
-        val service: RegWorkInfoService
-            get() = this@RegWorkInfoService
-    }
-
     fun stopService() {
         if (null != scheduleService) {
             scheduleService!!.cancel()
@@ -224,6 +230,7 @@ class RegWorkInfoService : Service(), AMapLocationListener, ScheduleService.ISch
     }
 
     companion object {
+
         var mLocationOption: AMapLocationClientOption? = null
         var TAG = "EOAS"
         var imei = ""
@@ -234,6 +241,11 @@ class RegWorkInfoService : Service(), AMapLocationListener, ScheduleService.ISch
         private var notificationManager: NotificationManager? = null
         private var icon: Bitmap? = null
         private val regCount = 0
+
+        open class myBinder : Binder() {
+            val service: RegWorkInfoService
+                get() = RegWorkInfoService()
+        }
     }
 
 }

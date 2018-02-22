@@ -29,7 +29,6 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.eland.android.eoas.DeviceInfoFactory.GetDeviceInfo
 import com.eland.android.eoas.Service.*
-import com.eland.android.eoas.Service.RegWorkInfoService.Companion.distance
 import pl.droidsonroids.gif.AnimationListener
 import pl.droidsonroids.gif.GifDrawable
 import pl.droidsonroids.gif.GifImageView
@@ -64,7 +63,7 @@ class RegisterScheduleFragment : Fragment, AnimationListener, ScheduleService.IS
 
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             //返回一个MsgService对象
-            regWorkInfoService = (service as RegWorkInfoService.myBinder).service
+            regWorkInfoService = (service as RegWorkInfoService.Companion.myBinder).service
             regWorkInfoService!!.startService(imei!!, isAM!!, "MANUAL")
 
             regWorkInfoService!!.onAction = fun(distance: Float) {

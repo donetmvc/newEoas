@@ -2,7 +2,6 @@ package com.eland.android.eoas.Views;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.support.v7.widget.AppCompatEditText;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -11,15 +10,13 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.CycleInterpolator;
 import android.view.animation.TranslateAnimation;
-import android.widget.EditText;
 
 /**
  * Created by liu.wenbin on 15/11/10.
  */
-public class EditTextView extends AppCompatEditText {
+public class EditTextView extends android.support.v7.widget.AppCompatEditText{
 
     private Drawable mRightDrawable;
-    private boolean isHasFocus;
 
     public EditTextView(Context context) {
         super(context);
@@ -105,7 +102,7 @@ public class EditTextView extends AppCompatEditText {
     private class FocusChangeListenerImpl implements OnFocusChangeListener {
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
-            isHasFocus = hasFocus;
+            boolean isHasFocus = hasFocus;
             if (isHasFocus) {
                 boolean isVisible = getText().toString().length() >= 1;
                 setClearDrawableVisible(isVisible);

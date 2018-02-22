@@ -47,7 +47,6 @@
 
     <application
         android:name=".Application.EOASApplication"
-        tools:ignore="AllowBackup"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
