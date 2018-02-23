@@ -183,23 +183,13 @@ class RegAutoService : Service(), AMapLocationListener, ScheduleService.ISchedul
             message = regType
         }
 
-        if (Build.VERSION.SDK_INT >= 16) {
-            notification = android.support.v4.app.NotificationCompat.Builder(applicationContext, "0") //NotificationCompat.Builder(applicationContext)
-                    .setLargeIcon(icon)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setTicker("出勤通知").setContentInfo("移动OA")
-                    .setContentTitle("出勤通知").setContentText(message)
-                    .setAutoCancel(true).setDefaults(Notification.DEFAULT_ALL)
-                    .build()
-        } else {
-            notification = Notification.Builder(this)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setTicker("TickerText:" + "出勤通知")
-                    .setContentTitle("出勤通知")
-                    .setContentText(message)
-                    .setNumber(1)
-                    .notification
-        }
+        notification = android.support.v4.app.NotificationCompat.Builder(applicationContext, "0")
+                .setLargeIcon(icon)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setTicker("出勤通知").setContentInfo("移动OA")
+                .setContentTitle("出勤通知").setContentText(message)
+                .setAutoCancel(true).setDefaults(Notification.DEFAULT_ALL)
+                .build()
         notificationManager!!.notify(0, notification)
     }
 

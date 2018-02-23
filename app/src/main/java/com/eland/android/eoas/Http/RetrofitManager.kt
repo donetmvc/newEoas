@@ -77,6 +77,22 @@ class RetrofitManager {
                     .addInterceptor(HttpLoggingInterceptor().apply {
                         level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
                     }).build()!!
+
+            //        val client = OkHttpClient()
+//        val request = Request.Builder()
+//                .url("")
+//                .build()
+//        val call = client.newCall(request)
+//        call.execute()
+//        call.enqueue(object : Callback {
+//            override fun onResponse(call: Call?, response: Response?) {
+//
+//            }
+//
+//            override fun onFailure(call: Call?, e: IOException?) {
+//
+//            }
+//        })
         }
 
     }

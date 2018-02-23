@@ -15,9 +15,6 @@ import com.eland.android.eoas.Model.Constant
 import com.eland.android.eoas.Model.NameValueInfo
 import com.eland.android.eoas.R
 import com.eland.android.eoas.Service.ApplyService
-import com.eland.android.eoas.Util.ProgressUtil
-import com.eland.android.eoas.Util.SharedReferenceHelper
-import com.eland.android.eoas.Util.ToastUtil
 import com.eland.android.eoas.Views.SegmentView
 import com.rey.material.app.DatePickerDialog
 import com.rey.material.app.Dialog
@@ -38,6 +35,7 @@ import butterknife.OnClick
 
 import android.app.Activity
 import butterknife.BindView
+import com.eland.android.eoas.Util.*
 
 
 /**
@@ -92,7 +90,7 @@ class ApplyActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val theme = SharedReferenceHelper.getInstance(this).getValue(Constant.EOAS_THEME)
-        if (!theme.isEmpty()) {
+        if (theme.isNotEmpty()) {
             if (theme == "RED") {
                 setTheme(R.style.MainThenmeRed)
             } else {
@@ -126,9 +124,7 @@ class ApplyActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
         segEndtime.setSegmentText("13:00", 0)
         segEndtime.setSegmentText("17:00", 1)
 
-        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
-        val date = Date(System.currentTimeMillis())
-        val nowDate = simpleDateFormat.format(date)
+        val nowDate = System.currentTimeMillis().formatDate()
 
         setTime("08", "13")
         setDate(nowDate, nowDate)
@@ -137,8 +133,8 @@ class ApplyActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
         val thisYearStart = nowDate.substring(0, 4) + "-01-01"
         val thisYearEnd = nowDate.substring(0, 4) + "-12-31"
         try {
-            maxTime = simpleDateFormat.parse(thisYearEnd).time
-            minTime = simpleDateFormat.parse(thisYearStart).time
+            maxTime = thisYearEnd.parseTime()
+            minTime = thisYearStart.parseTime()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -187,6 +183,38 @@ class ApplyActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
 
     private fun initSpinner() {
         applyService!!.searchVacationType(mUserId!!, this)
+
+        //回调的另一种方法，类似于抽象类定义的方法在集成的子类里面调用
+        applyService?.action = fun(type: Int, code: Int, result: JSONArray?) {
+            when(type) {
+                2 -> {
+                    mList = ArrayList()
+
+                    val vacationTypes = arrayOfNulls<String>(result!!.length())
+                    try {
+                        for (i in 0 until result.length()) {
+                            val obj = result.getJSONObject(i)
+                            mList?.add(NameValueInfo(obj.getString("name"), obj.getString("code")))
+                            vacationTypes[i] = obj.getString("name")
+                        }
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+
+
+                    val adapter = ArrayAdapter<String>(this@ApplyActivity, R.layout.vacation_spinner_layout, vacationTypes)
+                    adapter.setDropDownViewResource(R.layout.vacation_spinner_dropdown)
+                    spinnerVacationtype.adapter = adapter
+
+                    if (httpDialog!!.isShowing) {
+                        httpDialog!!.dismiss()
+                    }
+                }
+                1 -> {
+
+                }
+            }
+        }
     }
 
     private fun getDiffDate() {
@@ -213,28 +241,6 @@ class ApplyActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
         startDate = start
         endDate = end
 
-        //        Calendar ca = Calendar.getInstance();
-        //        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        //        String thisYear = ca.YEAR + "-12-31";
-        //
-        //        try {
-        //            if (dateFormat.parse(start).getTime() > dateFormat.parse(thisYear).getTime()) {
-        //                txtStartdate.setText(thisYear);
-        //            }
-        //            else {
-        //                txtStartdate.setText(start);
-        //            }
-        //
-        //            if (dateFormat.parse(end).getTime() > dateFormat.parse(thisYear).getTime()) {
-        //                txtEnddate.setText(thisYear);
-        //            }
-        //            else {
-        //                txtEnddate.setText(end);
-        //            }
-        //        } catch (ParseException e) {
-        //            e.printStackTrace();
-        //        }
-
         txtStartdate.text = startDate
         txtEnddate.text = endDate
     }
@@ -251,15 +257,7 @@ class ApplyActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
 
     @OnClick(R.id.txt_startdate)
     internal fun setStartDate() {
-
-
         val builder = object : DatePickerDialog.Builder(R.style.Material_App_Dialog_DatePicker) {
-            //            @Override
-            //            public DatePickerDialog.Builder dateRange(long min, long max) {
-            //                min = minTime;
-            //                max = maxTime;
-            //                return super.dateRange(min, max);
-            //            }
 
             override fun onPositiveActionClicked(fragment: DialogFragment) {
                 val dialog = fragment.dialog as DatePickerDialog
@@ -287,11 +285,7 @@ class ApplyActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
     internal fun setEndDate() {
         val builder = object : DatePickerDialog.Builder(R.style.Material_App_Dialog_DatePicker) {
             override fun dateRange(min: Long, max: Long): DatePickerDialog.Builder {
-                var min = min
-                var max = max
-                min = minTime
-                max = maxTime
-                return super.dateRange(min, max)
+                return super.dateRange(minTime, maxTime)
             }
 
             override fun onPositiveActionClicked(fragment: DialogFragment) {
@@ -400,32 +394,32 @@ class ApplyActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
     }
 
     override fun onSuccess(array: JSONArray?) {
-        mList = ArrayList()
-        var dto: NameValueInfo? = null
-
-        val vacationTypes = arrayOfNulls<String>(array!!.length())
-        try {
-            for (i in 0 until array.length()) {
-                var obj: JSONObject? = null
-                obj = array.getJSONObject(i)
-                dto = NameValueInfo()
-                dto.name = obj!!.getString("name")
-                dto.code = obj.getString("code")
-                mList!!.add(dto)
-                vacationTypes[i] = obj.getString("name")
-            }
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
-
-
-        val adapter = ArrayAdapter<String>(this@ApplyActivity, R.layout.vacation_spinner_layout, vacationTypes)
-        adapter.setDropDownViewResource(R.layout.vacation_spinner_dropdown)
-        spinnerVacationtype.adapter = adapter
-
-        if (httpDialog!!.isShowing) {
-            httpDialog!!.dismiss()
-        }
+//        mList = ArrayList()
+//        var dto: NameValueInfo? = null
+//
+//        val vacationTypes = arrayOfNulls<String>(array!!.length())
+//        try {
+//            for (i in 0 until array.length()) {
+//                var obj: JSONObject? = null
+//                obj = array.getJSONObject(i)
+//                dto = NameValueInfo()
+//                dto.name = obj!!.getString("name")
+//                dto.code = obj.getString("code")
+//                mList!!.add(dto)
+//                vacationTypes[i] = obj.getString("name")
+//            }
+//        } catch (e: JSONException) {
+//            e.printStackTrace()
+//        }
+//
+//
+//        val adapter = ArrayAdapter<String>(this@ApplyActivity, R.layout.vacation_spinner_layout, vacationTypes)
+//        adapter.setDropDownViewResource(R.layout.vacation_spinner_dropdown)
+//        spinnerVacationtype.adapter = adapter
+//
+//        if (httpDialog!!.isShowing) {
+//            httpDialog!!.dismiss()
+//        }
     }
 
     override fun onSuccess(diffDays: String?) {

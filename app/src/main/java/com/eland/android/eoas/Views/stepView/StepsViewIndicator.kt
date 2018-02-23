@@ -11,6 +11,7 @@ import android.view.View
 import com.eland.android.eoas.R
 
 import java.util.ArrayList
+import kotlin.math.nextDown
 
 
 class StepsViewIndicator @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) : View(context, attrs, defStyle) {
@@ -116,53 +117,72 @@ class StepsViewIndicator @JvmOverloads constructor(context: Context, attrs: Attr
 
         startPaint.isAntiAlias = true
         startPaint.color = mStartColor
-        startPaint.style = Paint.Style.STROKE
+        startPaint.style = Paint.Style.FILL_AND_STROKE
         startPaint.strokeWidth = 2f
 
         // Draw rect bounds
         paint.isAntiAlias = true
         paint.color = mBarColor
-        paint.style = Paint.Style.STROKE
+        paint.style = Paint.Style.FILL_AND_STROKE
         paint.strokeWidth = 2f
 
         selectedPaint.isAntiAlias = true
         selectedPaint.color = mThumbColor
-        selectedPaint.style = Paint.Style.STROKE
+        selectedPaint.style = Paint.Style.FILL_AND_STROKE
         selectedPaint.strokeWidth = 2f
 
-
-
-        // Draw rest of the circle'Bounds
-        for (i in mThumbContainerXPosition.indices) {
-            if(i == 0) {
-                canvas.drawCircle(mThumbContainerXPosition[i], mCenterY, mCircleRadius, startPaint)
+        mThumbContainerXPosition.forEachIndexed { index, position ->
+            when(index) {
+                0 -> {
+                    //开始
+                    canvas.drawCircle(position, mCenterY, mCircleRadius, startPaint)
+                }
+                mThumbContainerXPosition.size - 1 -> {
+                    //last
+                    canvas.drawCircle(position, mCenterY, mCircleRadius, selectedPaint)
+                }
+                else -> {
+                    //
+                    canvas.drawCircle(position, mCenterY, mCircleRadius, paint)
+                }
             }
-            else {
-                canvas.drawCircle(mThumbContainerXPosition[i], mCenterY, mCircleRadius,
-                        if (i <= mCompletedPosition) selectedPaint else paint)
+            if(index < mThumbContainerXPosition.size - 1) {
+                canvas.drawRect(position + mCircleRadius, mLeftY, mThumbContainerXPosition[index + 1], mRightY, paint)
             }
-        }
+         }
 
-        paint.style = Paint.Style.FILL
-        selectedPaint.style = Paint.Style.FILL
-        for (i in 0 until mThumbContainerXPosition.size - 1) {
-            val pos = mThumbContainerXPosition[i]
-            val pos2 = mThumbContainerXPosition[i + 1]
-            canvas.drawRect(pos, mLeftY, pos2, mRightY,
-                    if (i < mCompletedPosition) selectedPaint else paint)
-        }
 
-        // Draw rest of circle
-        for (i in mThumbContainerXPosition.indices) {
-            val pos = mThumbContainerXPosition[i]
-            canvas.drawCircle(pos, mCenterY, mCircleRadius,
-                    if (i <= mCompletedPosition) selectedPaint else paint)
 
-            if (i == mCompletedPosition) {
-                selectedPaint.color = getColorWithAlpha(mThumbColor, 0.2f)
-                canvas.drawCircle(pos, mCenterY, mCircleRadius * 1.8f, selectedPaint)
-            }
-        }
+//        // 画内圈
+//        for (i in mThumbContainerXPosition.indices) {
+//            if(i == 0) {
+//                canvas.drawCircle(mThumbContainerXPosition[i], mCenterY, mCircleRadius, startPaint)
+//            }
+//            else {
+//                canvas.drawCircle(mThumbContainerXPosition[i], mCenterY, mCircleRadius,
+//                        if (i == mThumbContainerXPosition.size - 1) selectedPaint else paint)
+//            }
+//        }
+//
+//        paint.style = Paint.Style.FILL
+//        selectedPaint.style = Paint.Style.FILL
+//        for (i in 0 until mThumbContainerXPosition.size - 1) {
+//            val pos = mThumbContainerXPosition[i]
+//            val pos2 = mThumbContainerXPosition[i + 1]
+//            canvas.drawRect(pos, mLeftY, pos2, mRightY, paint)
+//        }
+//
+//        // 画最外圈
+//        for (i in mThumbContainerXPosition.indices) {
+//            val pos = mThumbContainerXPosition[i]
+//            canvas.drawCircle(pos, mCenterY, mCircleRadius,
+//                    if (i == mThumbContainerXPosition.size - 1) selectedPaint else paint)
+//
+//            if (i == mThumbContainerXPosition.size - 1) {
+//                selectedPaint.color = getColorWithAlpha(mThumbColor, 0.2f)
+//                canvas.drawCircle(pos, mCenterY, mCircleRadius * 1.8f, selectedPaint)
+//            }
+//        }
     }
 
     interface OnDrawListener {

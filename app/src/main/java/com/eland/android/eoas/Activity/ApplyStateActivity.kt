@@ -25,6 +25,8 @@ import org.json.JSONObject
 
 import butterknife.BindView
 import butterknife.ButterKnife
+import okhttp3.*
+import java.io.IOException
 
 /**
  * Created by liu.wenbin on 15/12/29.
@@ -103,15 +105,12 @@ class ApplyStateActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
 
     override fun onSuccess(array: JSONArray?) {
         if (null != array && array.length() > 0) {
-//            approves = arr("开始")
             approves.add("开始")
             try {
 
                 for (i in 0 until array.length()) {
                     val obj = array.getJSONObject(i)
                     approves.add(obj.getString("ApproveUserName"))
-//                    approves[i] = obj.getString("ApproveUserName")
-//                    val approveState = obj.getString("ApproveStateName")
                     if (obj.getString("ApproveStateName") == "批准") {
                         approvePosition++
                     }
@@ -120,12 +119,10 @@ class ApplyStateActivity : AppCompatActivity(), ApplyService.IOnApplyListener {
                 e.printStackTrace()
             }
 
-            var color: Int = if (SDK_INT > 23) {
+            var color: Int = if (SDK_INT >= 23) {
                 resources.getColor(R.color.md_red_500, theme)
             }
-            else {
-                resources.getColor(R.color.md_red_500)
-            }
+            else resources.getColor(R.color.md_red_500)
 
             step.setLabels(approves)
                     .setBarColor(Color.GRAY)

@@ -17,6 +17,9 @@ import cz.msebera.android.httpclient.Header
  */
 class ApplyService(private val context: Context) {
 
+    var action = { type: Int, code: Int, result: JSONArray? -> Unit }
+
+
     fun searchVacationType(userId: String, iOnApplyListener: IOnApplyListener) {
         val uri = "api/Apply"
 
@@ -28,21 +31,23 @@ class ApplyService(private val context: Context) {
 
             override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONArray?) {
                 super.onSuccess(statusCode, headers, response)
-                iOnApplyListener.onSuccess(response)
+//                iOnApplyListener.onSuccess(response)
+                action(2, 200, response)
             }
 
             override fun onFailure(statusCode: Int, headers: Array<Header>?, throwable: Throwable, errorResponse: JSONArray?) {
                 super.onFailure(statusCode, headers, throwable, errorResponse)
-                iOnApplyListener.onFailure(1, 99999, "连接服务器超时")
+                action(1, 99999, null)
+//                iOnApplyListener.onFailure(1, 99999, "连接服务器超时")
             }
 
             override fun onFailure(statusCode: Int, headers: Array<Header>?, responseString: String?, throwable: Throwable) {
                 super.onFailure(statusCode, headers, responseString, throwable)
-                iOnApplyListener.onFailure(1, 99999, "连接服务器超时")
+//                iOnApplyListener.onFailure(1, 99999, "连接服务器超时")
+                action(1, 99999, null)
             }
 
         })
-
     }
 
     fun searchVacationDays(userId: String, iOnApplyListener: IOnApplyListener) {
