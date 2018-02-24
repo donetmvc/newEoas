@@ -18,6 +18,7 @@ import com.amap.api.location.AMapLocationClientOption
 import com.amap.api.location.AMapLocationListener
 import com.amap.api.maps.AMapUtils
 import com.amap.api.maps.model.LatLng
+import com.eland.android.eoas.Application.EOASApplication
 import com.eland.android.eoas.R
 import com.eland.android.eoas.Util.ConsoleUtil
 import com.eland.android.eoas.Util.SharedReferenceHelper
@@ -79,7 +80,7 @@ class RegAutoService : Service(), AMapLocationListener, ScheduleService.ISchedul
     }
 
     private fun initMap() {
-        mLocationClient = AMapLocationClient(applicationContext)
+        mLocationClient = AMapLocationClient(EOASApplication.applicationContext())
         mLocationClient!!.setLocationListener(this)
         initOption()
         mLocationClient!!.setLocationOption(mLocationOption)
@@ -162,7 +163,7 @@ class RegAutoService : Service(), AMapLocationListener, ScheduleService.ISchedul
     }
 
     private fun startRegService() {
-        scheduleService = ScheduleService(applicationContext)
+        scheduleService = ScheduleService(EOASApplication.applicationContext())
         scheduleService!!.setOnScheduleListener(this)
         //ConsoleUtil.i(TAG, "----------RegWorkInfoService:" + "Regist start" + isAm);
         scheduleService!!.regScheduleAM(imei, isAm)

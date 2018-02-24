@@ -21,6 +21,7 @@ import com.amap.api.location.AMapLocationClientOption
 import com.amap.api.location.AMapLocationListener
 import com.amap.api.maps.AMapUtils
 import com.amap.api.maps.model.LatLng
+import com.eland.android.eoas.Application.EOASApplication
 import com.eland.android.eoas.R
 import com.eland.android.eoas.Util.ConsoleUtil
 
@@ -41,7 +42,7 @@ class RegWorkInfoService : Service(), AMapLocationListener, ScheduleService.ISch
             initParams(intent)
         }
 
-        scheduleService = ScheduleService(applicationContext)
+        scheduleService = ScheduleService(EOASApplication.applicationContext())
         scheduleService!!.setOnScheduleListener(this)
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         icon = BitmapFactory.decodeResource(resources,
@@ -70,7 +71,7 @@ class RegWorkInfoService : Service(), AMapLocationListener, ScheduleService.ISch
     }
 
     private fun initMap() {
-        mLocationClient = AMapLocationClient(applicationContext)
+        mLocationClient = AMapLocationClient(EOASApplication.applicationContext())
         mLocationClient!!.setLocationListener(this)
         initOption()
         mLocationClient!!.setLocationOption(mLocationOption)
@@ -234,11 +235,9 @@ class RegWorkInfoService : Service(), AMapLocationListener, ScheduleService.ISch
     }
 
     fun stopService() {
-        if (null != scheduleService) {
-            scheduleService!!.cancel()
-        }
-        mLocationClient!!.stopLocation()
-        mLocationClient!!.onDestroy()
+        scheduleService?.cancel()
+        mLocationClient?.stopLocation()
+        mLocationClient?.onDestroy()
         stopSelf()
     }
 

@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity(), ProgressUtil.IOnMainUpdateListener {
             }
         } else {
             setTheme(R.style.MainThenmeRed)
+            SharedReferenceHelper.getInstance(this).setValue(Constant.EOAS_THEME, "RED")
         }
         super.onCreate(savedInstanceState)
 

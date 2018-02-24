@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.*
 import android.support.v4.app.Fragment
-import android.telephony.TelephonyManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +26,7 @@ import java.util.GregorianCalendar
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.eland.android.eoas.Activity.MainActivity
 import com.eland.android.eoas.DeviceInfoFactory.GetDeviceInfo
 import com.eland.android.eoas.Service.*
 import pl.droidsonroids.gif.AnimationListener
@@ -158,8 +158,8 @@ class RegisterScheduleFragment : Fragment, AnimationListener, ScheduleService.IS
         if (null != gifDrawable && gifDrawable!!.isPlaying) {
             //gifDrawable.stop();
             gifDrawable!!.recycle()
-            val theme = SharedReferenceHelper.getInstance(context).getValue(Constant.EOAS_THEME)
-            if (!theme.isEmpty() && theme == "RED") {
+            val theme = SharedReferenceHelper.getInstance(activity).getValue(Constant.EOAS_THEME)
+            if (theme.isNotEmpty() && theme == "RED") {
                 imgGif.setImageDrawable(context.resources.getDrawable(R.drawable.schedule_nomor))
             } else {
                 imgGif.setImageDrawable(context.resources.getDrawable(R.drawable.schedule_nomor_blue))
@@ -222,10 +222,9 @@ class RegisterScheduleFragment : Fragment, AnimationListener, ScheduleService.IS
         super.onDetach()
     }
 
-    @Synchronized
     private fun updateDistance(message: Message) {
-        when(message.what) {
-            CANREGIST -> {
+        @Synchronized when(message.what) {
+             CANREGIST -> {
                 if(freeConn) {
                     context!!.unbindService(conn!!)
                     freeConn = false

@@ -96,10 +96,10 @@ class LoginActivity : BaseActivity(), LoginService.ISignInListener, ProgressUtil
 
     private fun initActivity() {
         //如果进入登录页面说明还未登录，暂不能接收push
-        JPushInterface.stopPush(applicationContext)
+        JPushInterface.stopPush(context.applicationContext)
 
         loginService = LoginService(context)
-        loginService!!.setOnSignInListener(this)
+        loginService.setOnSignInListener(this)
         telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
 
         dialogUtil = ProgressUtil()
@@ -179,7 +179,7 @@ class LoginActivity : BaseActivity(), LoginService.ISignInListener, ProgressUtil
 
         //登录系统后开启接收push,当然需要判断下用户是否设置了接收与否
         if (CacheInfoUtil.loadIsReceive(this, loginId)!!) {
-            JPushInterface.resumePush(applicationContext)
+            JPushInterface.resumePush(context.applicationContext)
         }
 
         val intent = Intent(this@LoginActivity, MainActivity::class.java)

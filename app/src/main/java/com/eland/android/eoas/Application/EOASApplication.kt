@@ -2,6 +2,7 @@ package com.eland.android.eoas.Application
 
 import android.app.Activity
 import android.app.Application
+import android.content.Context
 
 import com.eland.android.eoas.Util.ActivityManager
 import com.pgyersdk.crash.PgyCrashManager

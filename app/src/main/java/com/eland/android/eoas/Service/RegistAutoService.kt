@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.telephony.TelephonyManager
+import com.eland.android.eoas.Application.EOASApplication
 import com.eland.android.eoas.DeviceInfoFactory.GetDeviceInfo
 
 import com.eland.android.eoas.Model.Constant
@@ -28,7 +29,7 @@ class RegistAutoService : Service(), RegistPushIDService.IOnRegistListener {
         if (null != intent) {
             pushId = intent.getStringExtra("PUSHID")
         }
-        imei = GetDeviceInfo(applicationContext).getDeviceId()
+        imei = GetDeviceInfo(EOASApplication.applicationContext()).getDeviceId()
 
         if (pushId?.isNotEmpty()!! && imei?.isNotEmpty()!!) {
             startRegistService()
