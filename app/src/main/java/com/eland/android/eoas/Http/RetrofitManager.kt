@@ -10,7 +10,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.io.File
 import java.util.*
 
@@ -53,7 +52,6 @@ class RetrofitManager {
             private val RETROFITINSTANCE = Retrofit.Builder()
                     .baseUrl("http://api.apixu.com")
                     .client(OkhttpHolder.OKHTTPINSTANCE)
-                    .addConverterFactory(ScalarsConverterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create())
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .build()

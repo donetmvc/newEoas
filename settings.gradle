@@ -1,1 +1,1 @@
-include ':app', ':eland-core'
+include ':app'
